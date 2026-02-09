@@ -1,4 +1,5 @@
 <script setup>
+
 useHead({
   meta: [
     { name: 'viewport', content: 'width=device-width, initial-scale=1' }
@@ -7,12 +8,12 @@ useHead({
     { rel: 'icon', href: '/favicon.ico' }
   ],
   htmlAttrs: {
-    lang: 'en'
+    lang: 'es'
   }
 })
 
-const title = 'Nuxt Starter Template'
-const description = 'A production-ready starter template powered by Nuxt UI. Build beautiful, accessible, and performant applications in minutes, not hours.'
+const title = 'Leyes+IA'
+const description = 'Plataforma para participar colectivamente en proyectos de ley de legisladores argentinos, donde la IA ayuda a la ciudadania a explicar y entender, sin reemplazarla.'
 
 useSeoMeta({
   title,
@@ -24,21 +25,11 @@ useSeoMeta({
   twitterCard: 'summary_large_image'
 })
 
-const navigationLinks = [{
-  label: 'Proyectos',
-  icon: 'lucide:folder',
-  to: '/projects',
-  children: []
-}, {
-    label: 'Crear nuevo proyecto',
-    icon: 'lucide:plus-circle',
-    description: 'Iniciar un nuevo proyecto de ley para discusión',
-  }];
 </script>
 
 <template>
   <UApp :toaster="{ position: 'top-right' }" :tooltip="{ delayDuration: 200 }">
-    <NuxtLoadingIndicator class="z-100" color="var(--ui-primary)" />
+    <NuxtLoadingIndicator class="z-100" color="neutral" />
     <NuxtPage />
   </UApp>
 </template>

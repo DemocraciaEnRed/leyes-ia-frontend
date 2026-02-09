@@ -1,4 +1,7 @@
 <script setup>
+definePageMeta({
+})
+
 import { useRoute } from 'vue-router';
 import { getTextFromMessage } from '@nuxt/ui/runtime/utils/ai.js';
 import {  v4 as uuidv4 } from 'uuid';

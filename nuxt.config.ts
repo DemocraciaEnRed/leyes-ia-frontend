@@ -1,6 +1,12 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  modules: ['@nuxt/eslint', '@nuxt/ui', '@nuxtjs/mdc', '@nuxt/icon'],
+  modules: [
+    '@nuxt/eslint',
+    '@nuxt/ui',
+    '@nuxtjs/mdc',
+    '@nuxt/icon',
+    'nuxt-auth-utils'
+  ],
 
   devtools: {
     enabled: true
@@ -13,7 +19,8 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     public: {
-      apiUrl: process.env.NUXT_PUBLIC_API_URL || 'http://localhost:4000'
+      backendUrl: process.env.NUXT_BACKEND_URL || 'http://localhost:4000',
+      frontendUrl: process.env.NUXT_FRONTEND_URL || 'http://localhost:3000'
     }
   },
   // vite: {

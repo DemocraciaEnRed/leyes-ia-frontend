@@ -5,7 +5,7 @@ definePageMeta({
     layout: 'dashboard'
 })
 
-const { data: knowledgeBases } = await useFetch(`${runtimeConfig.public.apiUrl}/knowledge-bases`, {
+const { data: knowledgeBases } = await useFetch(`/api/backend/knowledge-bases`, {
     method: 'GET'
 })
 </script>

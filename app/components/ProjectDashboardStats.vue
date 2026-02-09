@@ -66,7 +66,7 @@ const stats = baseStats.map(stat => {
       :key="index"
       :icon="stat.icon"
       :title="stat.title"
-      to="/workspaces"
+      to="/legislador/hubs"
       variant="subtle"
       :ui="{
         container: 'gap-y-1.5',
