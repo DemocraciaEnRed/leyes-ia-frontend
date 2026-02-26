@@ -16,7 +16,7 @@ const refresh = async () => {
   errorMessage.value = ''
 
   try {
-    const response = await $authFetch(`/api/backend/projects/${props.projectId}/knowledge-base/ready`)
+    const response = await $authFetch(`/api/backend/projects/${props.projectId}/manage/knowledge-base/ready`)
     ready.value = Boolean(response?.ready)
     knowledgeBase.value = response?.knowledgeBase || null
   } catch (error) {
@@ -134,7 +134,7 @@ const stats = computed(() => {
   ]
 })
 </script>
-    
+
 <template>
   <UPageGrid class="sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-3">
     <template v-if="isLoading">
@@ -162,7 +162,7 @@ const stats = computed(() => {
         :key="index"
         :icon="stat.icon"
         :title="stat.title"
-        to="/legislador/hubs"
+        to="/cuenta/proyectos"
         variant="subtle"
         :ui="{
           container: 'gap-y-1.5',

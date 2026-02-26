@@ -1,10 +1,9 @@
 import type { LoginCredentials, SignupCredentials } from '#shared/types/authCredentials'
 // import type { User } from '#shared/types/auth'
 
-
 export const useAuth = () => {
   const router = useRouter()
-  const {loggedIn, user, fetch: refreshSession, clear: clearSession, session} = useUserSession()
+  const { loggedIn, user, fetch: refreshSession, clear: clearSession, session } = useUserSession()
   // Fetch session from server
   // Role helpers
   const isAdmin = computed<boolean>(() => user.value?.role === 'admin')
@@ -16,12 +15,12 @@ export const useAuth = () => {
     try {
       const response = await $fetch('/api/auth/login', {
         method: 'POST',
-        body: credentials,
+        body: credentials
       })
-      
+
       // Refresh session to get updated user data
       await refreshSession()
-      
+
       return response
     } catch (error) {
       throw error
@@ -33,12 +32,12 @@ export const useAuth = () => {
     try {
       const response = await $fetch('/api/auth/signup', {
         method: 'POST',
-        body: credentials,
+        body: credentials
       })
-      
+
       // Refresh session to get updated user data
       await refreshSession()
-      
+
       return response
     } catch (error) {
       throw error
@@ -49,12 +48,12 @@ export const useAuth = () => {
   const logout = async () => {
     try {
       await $fetch('/api/auth/logout', {
-        method: 'POST',
+        method: 'POST'
       })
-      
+
       // Clear session data
       await clearSession()
-      
+
       // Redirect to home
       await router.push('/')
     } catch (error) {
@@ -74,6 +73,6 @@ export const useAuth = () => {
     session,
     signup,
     logout,
-    refreshSession,
+    refreshSession
   }
 }

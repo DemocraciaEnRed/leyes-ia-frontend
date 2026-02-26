@@ -5,6 +5,4 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   if (loggedIn.value) {
     return navigateTo('/')
   }
-   
-  
 })

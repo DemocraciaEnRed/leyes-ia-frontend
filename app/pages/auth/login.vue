@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import type { FormSubmitEvent, AuthFormField } from '@nuxt/ui'
+
+import * as z from 'zod'
+
 type Schema = z.output<typeof schema>
 
 definePageMeta({
   layout: 'default',
   middleware: 'guest'
 })
-
-import * as z from 'zod'
 
 const { login } = useAuth()
 const router = useRouter()
@@ -28,7 +29,6 @@ const fields: AuthFormField[] = [{
   required: true
 }]
 
-
 const schema = z.object({
   email: z.email('Correo electrónico inválido'),
   password: z.string('Ingrese su contraseña').min(8, 'Debe tener al menos 8 caracteres')
@@ -41,7 +41,7 @@ const handleLogin = async (event: FormSubmitEvent<Schema>) => {
       password: event.data.password
     })
 
-    // Redirigir a hubs después de login exitoso
+    // Redirigir a Mis proyectos después de login exitoso
     toast.add({
       title: 'Inicio de sesión exitoso',
       description: '¡Bienvenido de nuevo!',
@@ -49,7 +49,7 @@ const handleLogin = async (event: FormSubmitEvent<Schema>) => {
       color: 'success'
     })
 
-    await navigateTo('/legislador/hubs')
+    await navigateTo('/cuenta/proyectos')
   } catch (error: any) {
     toast.add({
       title: 'Error de inicio de sesión',
@@ -63,12 +63,20 @@ const handleLogin = async (event: FormSubmitEvent<Schema>) => {
 
 <template>
   <NuxtLayout>
-
     <UContainer>
-      <UPageCard class="w-full max-w-md mx-auto mt-20" variant="subtle">
-        <UAuthForm :schema="schema" title="Iniciar sesión"
-          description="Ingrese sus credenciales para acceder a su cuenta." icon="lucide:user-circle" :fields="fields"
-          @submit="handleLogin" :submit="{ label: 'Iniciar sesión', block: true, icon: 'lucide:log-in' }" />
+      <UPageCard
+        class="w-full max-w-md mx-auto mt-20"
+        variant="subtle"
+      >
+        <UAuthForm
+          :schema="schema"
+          title="Iniciar sesión"
+          description="Ingrese sus credenciales para acceder a su cuenta."
+          icon="lucide:user-circle"
+          :fields="fields"
+          :submit="{ label: 'Iniciar sesión', block: true, icon: 'lucide:log-in' }"
+          @submit="handleLogin"
+        />
       </UPageCard>
     </UContainer>
   </NuxtLayout>

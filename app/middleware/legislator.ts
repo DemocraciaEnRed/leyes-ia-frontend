@@ -10,7 +10,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   if (user.value?.role !== 'legislator') {
     return abortNavigation({
       statusCode: 403,
-      message: 'Access denied. Legislator role required.',
+      message: 'Access denied. Legislator role required.'
     })
   }
 })

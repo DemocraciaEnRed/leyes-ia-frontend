@@ -3,6 +3,7 @@
 
 @theme static {
   --font-sans: 'Public Sans', sans-serif;
+  --font-title: 'Montserrat Alternates', sans-serif;
 
   --color-green-50: #EFFDF5;
   --color-green-100: #D9FBE8;
@@ -15,8 +16,80 @@
   --color-green-800: #016538;
   --color-green-900: #0A5331;
   --color-green-950: #052E16;
+
+  /* Colores Democracia en Red */
+  --color-verdecito-50: hsl(137.1 77.8% 96.5%);
+  --color-verdecito-100: hsl(140 78.9% 92.5%);
+  --color-verdecito-200: hsl(142.6 81.1% 81.4%);
+  --color-verdecito-300: hsl(143.9 76.3% 73.5%);
+  --color-verdecito-400: hsl(144.1 62.6% 69.6%);
+  --color-verdecito-500: hsl(144.1 52.3% 65.5%);
+  --color-verdecito-600: hsl(143.8 29.3% 51.2%);
+  --color-verdecito-700: hsl(144.6 29.5% 37.3%);
+  --color-verdecito-800: hsl(144.6 31.7% 24.1%);
+  --color-verdecito-900: hsl(142.5 36.4% 12.9%);
+  --color-verdecito-950: hsl(144.7 45.9% 7.3%);
+  --color-azulcito-50: hsl(214.3 100% 97.3%);
+  --color-azulcito-100: hsl(212.5 100% 95.3%);
+  --color-azulcito-200: hsl(211.8 100% 90.4%);
+  --color-azulcito-300: hsl(210.4 100% 84.1%);
+  --color-azulcito-400: hsl(208.9 100% 78%);
+  --color-azulcito-500: hsl(206.6 100% 70.8%);
+  --color-azulcito-600: hsl(199.1 100% 43.1%);
+  --color-azulcito-700: hsl(199.5 100% 32%);
+  --color-azulcito-800: hsl(200.2 100% 22.2%);
+  --color-azulcito-900: hsl(202.5 100% 12.5%);
+  --color-azulcito-950: hsl(204.6 100% 7.6%);
+  --color-amarillito-50: hsl(56 88.2% 96.7%);
+  --color-amarillito-100: hsl(56.1 88.6% 93.1%);
+  --color-amarillito-200: hsl(55 88.9% 89.4%);
+  --color-amarillito-300: hsl(55.5 92.2% 80%);
+  --color-amarillito-400: hsl(56.1 90.1% 76.3%);
+  --color-amarillito-500: hsl(56 81.5% 74.5%);
+  --color-amarillito-600: hsl(56.4 39.3% 58%);
+  --color-amarillito-700: hsl(56.2 29.6% 41.8%);
+  --color-amarillito-800: hsl(57.2 30.9% 27.3%);
+  --color-amarillito-900: hsl(55.2 36.2% 13.5%);
+  --color-amarillito-950: hsl(56.5 45.9% 7.3%);
+  --color-violetita-50: hsl(280 75% 98.4%);
+  --color-violetita-100: hsl(283.6 64.7% 96.7%);
+  --color-violetita-200: hsl(285 70.6% 93.3%);
+  --color-violetita-300: hsl(286.3 68.6% 90%);
+  --color-violetita-400: hsl(286.3 70.6% 86.7%);
+  --color-violetita-500: hsl(287 69.8% 83.1%);
+  --color-violetita-600: hsl(288.8 71.1% 68.8%);
+  --color-violetita-700: hsl(290.2 51.8% 51.2%);
+  --color-violetita-800: hsl(290 51.7% 34.1%);
+  --color-violetita-900: hsl(290 57.4% 18.4%);
+  --color-violetita-950: hsl(290.5 67.9% 11%);
+  --color-rojito-50: hsl(354 83.3% 97.6%);
+  --color-rojito-100: hsl(352.5 85.7% 94.5%);
+  --color-rojito-200: hsl(351.3 85.7% 89%);
+  --color-rojito-300: hsl(351.3 85.2% 84.1%);
+  --color-rojito-400: hsl(350.5 85.6% 78.2%);
+  --color-rojito-500: hsl(349.4 87.3% 72.2%);
+  --color-rojito-600: hsl(343.4 85.9% 55.5%);
+  --color-rojito-700: hsl(343.6 70.8% 41.6%);
+  --color-rojito-800: hsl(343.4 75.5% 27.3%);
+  --color-rojito-900: hsl(343.6 84.6% 15.3%);
+  --color-rojito-950: hsl(346 88.7% 10.4%);
+  --color-naranjito-50: hsl(15 85.7% 97.3%);
+  --color-naranjito-100: hsl(13 79.3% 94.3%);
+  --color-naranjito-200: hsl(13.3 84.9% 89.6%);
+  --color-naranjito-300: hsl(15 85.7% 83.5%);
+  --color-naranjito-400: hsl(15.6 85.7% 78%);
+  --color-naranjito-500: hsl(18 87.8% 71%);
+  --color-naranjito-600: hsl(22.3 64.9% 52%);
+  --color-naranjito-700: hsl(22.5 62.5% 37.6%);
+  --color-naranjito-800: hsl(22.6 65.9% 25.3%);
+  --color-naranjito-900: hsl(22.4 76.1% 13.1%);
+  --color-naranjito-950: hsl(20.6 85.4% 8%);
+
 }
 
+:root {
+  --ui-radius: 0.375rem
+}
 
 /* .dark {
   --ui-bg: var(--ui-color-neutral-950);

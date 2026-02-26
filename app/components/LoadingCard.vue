@@ -1,3 +1,3 @@
 <template>
-      <UProgress color="neutral" />
+  <UProgress color="neutral" />
 </template>

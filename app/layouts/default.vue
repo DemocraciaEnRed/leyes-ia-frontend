@@ -1,7 +1,7 @@
 <template>
-    <AppHeader />
-        <UMain >
-            <slot />
-        </UMain>
-    <AppFooter />
+  <AppHeader />
+  <UMain>
+    <slot />
+  </UMain>
+  <AppFooter />
 </template>

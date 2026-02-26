@@ -1,3 +1,3 @@
 export default function getBooleanTranslation(value: boolean): string {
-    return value ? 'Sí' : 'No';
+  return value ? 'Sí' : 'No'
 }

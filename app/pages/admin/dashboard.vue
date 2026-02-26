@@ -6,124 +6,268 @@ definePageMeta({
 
 const { user } = useAuth()
 
-// Example admin data - replace with real API calls
-const stats = ref({
-  totalUsers: 1234,
-  totalProjects: 567,
-  activeHubs: 89,
-  pendingReviews: 12
+const isLoading = ref(true)
+const errorMessage = ref('')
+const usage = ref<any>(null)
+
+const DAYS_RANGE = 30
+
+const getDateRange = () => {
+  const to = new Date()
+  const from = new Date(to.getTime() - DAYS_RANGE * 24 * 60 * 60 * 1000)
+
+  return {
+    from: from.toISOString(),
+    to: to.toISOString()
+  }
+}
+
+const refresh = async () => {
+  isLoading.value = true
+  errorMessage.value = ''
+
+  try {
+    const { from, to } = getDateRange()
+    usage.value = await $authFetch('/api/backend/admin/ai-usage', {
+      query: {
+        from,
+        to,
+        interval: 'auto',
+        limit: 20
+      }
+    })
+  } catch (_error) {
+    errorMessage.value = 'No se pudo cargar el dashboard de uso de IA.'
+    usage.value = null
+  } finally {
+    isLoading.value = false
+  }
+}
+
+onMounted(async () => {
+  await refresh()
 })
+
+const formatNumber = (value: unknown) => {
+  if (value === null || value === undefined || value === '') return '—'
+
+  const numeric = typeof value === 'string' ? Number(value) : Number(value)
+  if (Number.isNaN(numeric)) return '—'
+
+  return new Intl.NumberFormat('es-AR').format(numeric)
+}
+
+const formatCurrencyUsd = (value: unknown) => {
+  const numeric = typeof value === 'string' ? Number(value) : Number(value)
+  if (Number.isNaN(numeric)) return '—'
+
+  return new Intl.NumberFormat('es-AR', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  }).format(numeric)
+}
+
+const headlineCards = computed(() => {
+  const totals = usage.value?.totals || {}
+  const intervalLabel = usage.value?.filters?.resolvedInterval || 'day'
+
+  return [{
+    title: 'Tokens input',
+    icon: 'lucide:arrow-down-circle',
+    value: formatNumber(totals.inputTokens),
+    badgeColor: 'info',
+    badgeLabel: `${DAYS_RANGE} días`
+  }, {
+    title: 'Tokens output',
+    icon: 'lucide:arrow-up-circle',
+    value: formatNumber(totals.outputTokens),
+    badgeColor: 'secondary',
+    badgeLabel: `Intervalo ${intervalLabel}`
+  }, {
+    title: 'Tokens totales',
+    icon: 'lucide:braces',
+    value: formatNumber(totals.totalTokens),
+    badgeColor: 'primary',
+    badgeLabel: `${formatNumber(totals.events)} eventos`
+  }, {
+    title: 'Costo estimado',
+    icon: 'lucide:wallet-cards',
+    value: formatCurrencyUsd(totals.estimatedCostUsd),
+    badgeColor: 'warning',
+    badgeLabel: 'Estimado'
+  }]
+})
+
+const topActions = computed(() => (usage.value?.byAction || []).slice(0, 8))
+const topProjects = computed(() => (usage.value?.byProject || []).slice(0, 8))
+const recentSeries = computed(() => (usage.value?.timeSeries?.buckets || []).slice(-10))
 </script>
 
 <template>
   <div class="container mx-auto px-4 py-8">
     <div class="mb-8">
-      <h1 class="text-3xl font-bold">Admin Dashboard</h1>
+      <h1 class="text-3xl font-bold">
+        Dashboard IA (Admin)
+      </h1>
       <p class="text-gray-600 dark:text-gray-400 mt-2">
-        Welcome back, {{ user?.fullName }}
+        Bienvenido, {{ user?.fullName }}
       </p>
     </div>
 
     <UAlert
       color="primary"
       variant="soft"
-      title="Admin Access"
-      description="You are viewing this page because you have admin role privileges."
+      title="Acceso de administración"
+      :description="`Viendo métricas globales de IA de los últimos ${DAYS_RANGE} días.`"
       icon="i-lucide-shield-check"
       class="mb-8"
     />
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-      <UCard>
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-600 dark:text-gray-400">Total Users</p>
-            <p class="text-3xl font-bold mt-2">{{ stats.totalUsers }}</p>
-          </div>
-          <UIcon name="i-lucide-users" class="w-12 h-12 text-primary" />
-        </div>
-      </UCard>
+    <UAlert
+      v-if="errorMessage"
+      color="error"
+      variant="subtle"
+      :title="errorMessage"
+      class="mb-8"
+    />
 
-      <UCard>
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-600 dark:text-gray-400">Total Projects</p>
-            <p class="text-3xl font-bold mt-2">{{ stats.totalProjects }}</p>
-          </div>
-          <UIcon name="i-lucide-folder" class="w-12 h-12 text-primary" />
-        </div>
-      </UCard>
+    <UPageGrid class="sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-3 mb-8">
+      <template v-if="isLoading">
+        <UPageCard
+          v-for="index in 4"
+          :key="`loading-${index}`"
+          icon="lucide:loader"
+          title="Cargando"
+          variant="subtle"
+          :ui="{
+            container: 'gap-y-1.5',
+            wrapper: 'items-start',
+            leading: 'p-2.5 rounded-full bg-primary/10 ring ring-inset ring-primary/25 flex-col',
+            title: 'font-normal text-muted text-xs uppercase'
+          }"
+        >
+          <LoadingCard />
+        </UPageCard>
+      </template>
 
-      <UCard>
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-600 dark:text-gray-400">Hubs activos</p>
-            <p class="text-3xl font-bold mt-2">{{ stats.activeHubs }}</p>
+      <template v-else>
+        <UPageCard
+          v-for="(stat, index) in headlineCards"
+          :key="index"
+          :icon="stat.icon"
+          :title="stat.title"
+          variant="subtle"
+          :ui="{
+            container: 'gap-y-1.5',
+            wrapper: 'items-start',
+            leading: 'p-2.5 rounded-full bg-primary/10 ring ring-inset ring-primary/25 flex-col',
+            title: 'font-normal text-muted text-xs uppercase'
+          }"
+        >
+          <div class="flex items-center gap-2">
+            <span class="text-2xl font-semibold text-highlighted">{{ stat.value }}</span>
+            <UBadge
+              :color="stat.badgeColor"
+              variant="subtle"
+              class="text-xs"
+            >
+              {{ stat.badgeLabel }}
+            </UBadge>
           </div>
-          <UIcon name="i-lucide-briefcase" class="w-12 h-12 text-primary" />
-        </div>
-      </UCard>
+        </UPageCard>
+      </template>
+    </UPageGrid>
 
-      <UCard>
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-600 dark:text-gray-400">Pending Reviews</p>
-            <p class="text-3xl font-bold mt-2">{{ stats.pendingReviews }}</p>
-          </div>
-          <UIcon name="i-lucide-clock" class="w-12 h-12 text-primary" />
-        </div>
-      </UCard>
-    </div>
-
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <UCard>
-        <template #header>
-          <h3 class="text-xl font-semibold">Recent Activity</h3>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <UPageCard
+        variant="subtle"
+        class="lg:col-span-1"
+      >
+        <template #title>
+          <h3 class="text-lg font-semibold">
+            Por acción
+          </h3>
         </template>
-        <div class="space-y-4">
-          <div class="flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-800">
-            <UIcon name="i-lucide-user-plus" class="w-5 h-5 text-green-500" />
-            <div class="flex-1">
-              <p class="text-sm font-medium">New user registered</p>
-              <p class="text-xs text-gray-500">2 hours ago</p>
-            </div>
-          </div>
-          <div class="flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-800">
-            <UIcon name="i-lucide-folder-plus" class="w-5 h-5 text-blue-500" />
-            <div class="flex-1">
-              <p class="text-sm font-medium">Project created</p>
-              <p class="text-xs text-gray-500">5 hours ago</p>
-            </div>
-          </div>
-          <div class="flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-800">
-            <UIcon name="i-lucide-message-square" class="w-5 h-5 text-purple-500" />
-            <div class="flex-1">
-              <p class="text-sm font-medium">New comment posted</p>
-              <p class="text-xs text-gray-500">1 day ago</p>
-            </div>
-          </div>
-        </div>
-      </UCard>
 
-      <UCard>
-        <template #header>
-          <h3 class="text-xl font-semibold">Quick Actions</h3>
-        </template>
         <div class="space-y-3">
-          <UButton block variant="soft" icon="i-lucide-users">
-            Manage Users
-          </UButton>
-          <UButton block variant="soft" icon="i-lucide-folder">
-            View All Projects
-          </UButton>
-          <UButton block variant="soft" icon="i-lucide-settings">
-            System Settings
-          </UButton>
-          <UButton block variant="soft" icon="i-lucide-file-text">
-            Generate Reports
-          </UButton>
+          <div
+            v-for="row in topActions"
+            :key="row.action"
+            class="flex items-center justify-between text-sm"
+          >
+            <span class="text-muted">{{ row.action }}</span>
+            <span class="font-medium">{{ formatNumber(row.totalTokens) }} tokens</span>
+          </div>
+          <p
+            v-if="!topActions.length"
+            class="text-sm text-muted"
+          >
+            Sin datos
+          </p>
         </div>
-      </UCard>
+      </UPageCard>
+
+      <UPageCard
+        variant="subtle"
+        class="lg:col-span-1"
+      >
+        <template #title>
+          <h3 class="text-lg font-semibold">
+            Top proyectos
+          </h3>
+        </template>
+
+        <div class="space-y-3">
+          <div
+            v-for="row in topProjects"
+            :key="`project-${row.projectId}`"
+            class="flex items-center justify-between text-sm"
+          >
+            <span class="text-muted truncate pr-3">{{ row.project?.name || `Proyecto ${row.projectId}` }}</span>
+            <span class="font-medium">{{ formatNumber(row.totalTokens) }} tokens</span>
+          </div>
+          <p
+            v-if="!topProjects.length"
+            class="text-sm text-muted"
+          >
+            Sin datos
+          </p>
+        </div>
+      </UPageCard>
+
+      <UPageCard
+        variant="subtle"
+        class="lg:col-span-1"
+      >
+        <template #title>
+          <h3 class="text-lg font-semibold">
+            Serie temporal
+          </h3>
+        </template>
+
+        <div class="space-y-2 text-sm">
+          <div
+            v-for="bucket in recentSeries"
+            :key="bucket.start"
+            class="flex items-center justify-between"
+          >
+            <span class="text-muted">{{ bucket.label }}</span>
+            <span class="font-medium">{{ formatNumber(bucket.totalTokens) }} tk</span>
+          </div>
+          <p
+            v-if="!recentSeries.length"
+            class="text-sm text-muted"
+          >
+            Sin datos
+          </p>
+        </div>
+      </UPageCard>
     </div>
+
+    <p class="text-xs text-muted mt-6">
+      * El costo se muestra como estimado según pricing público de tokens y puede variar.
+    </p>
   </div>
 </template>

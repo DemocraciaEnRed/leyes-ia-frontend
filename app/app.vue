@@ -1,5 +1,4 @@
 <script setup>
-
 useHead({
   meta: [
     { name: 'viewport', content: 'width=device-width, initial-scale=1' }
@@ -12,7 +11,7 @@ useHead({
   }
 })
 
-const title = 'Leyes+IA'
+const title = 'demo+IA'
 const description = 'Plataforma para participar colectivamente en proyectos de ley de legisladores argentinos, donde la IA ayuda a la ciudadania a explicar y entender, sin reemplazarla.'
 
 useSeoMeta({
@@ -24,12 +23,17 @@ useSeoMeta({
   twitterImage: 'https://ui.nuxt.com/assets/templates/nuxt/starter-light.png',
   twitterCard: 'summary_large_image'
 })
-
 </script>
 
 <template>
-  <UApp :toaster="{ position: 'top-right' }" :tooltip="{ delayDuration: 200 }">
-    <NuxtLoadingIndicator class="z-100" color="neutral" />
+  <UApp
+    :toaster="{ position: 'top-right' }"
+    :tooltip="{ delayDuration: 200 }"
+  >
+    <NuxtLoadingIndicator
+      class="z-100"
+      color="neutral"
+    />
     <NuxtPage />
   </UApp>
 </template>

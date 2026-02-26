@@ -1,109 +1,220 @@
 <script setup>
-// const links = ref([{
-//     label: 'Proyecto: Modernización Laboral 2026',
-//     description: 'Proyecto de ley sobre modernización laboral para el año 2026',
-//     icon: 'i-lucide-file-text',
-//     to: '/chat/11017041c9a0-modernizacion-laboral-2026'
-//   }, {
-//     label: 'Proyecto: Marco Normativo de Inteligencia Artificial',
-//     description: 'Proyecto IA: desarrollo y uso responsable en argentina',
-//     icon: 'i-lucide-file-text',
-//     to: '/chat/domain-expert-kb04-marco-normaltivo-inteligencia-artificial'
-//   }])
-const links = ref([
+const { loggedIn } = useAuth()
+ 
+const pageHeroLinks = ref([
   {
     label: 'Explorá proyectos',
     to: '/proyectos',
-    icon: 'lucide:search'
-  },
-  {
-    label: 'Acerca de',
-    to: '/acerca-de',
+    variant: 'solid',
+    size: 'xl',
     color: 'neutral',
-    variant: 'subtle',
-    trailingIcon: 'lucide:arrow-right'
+    class: 'rounded-full px-6 font-title text-sm md:text-lg font-semibold',
+    trailingIcon: 'lucide:arrow-right-circle'
   }
 ])
 
-const features = ref([
-  {
-    title: 'Participá de encuestas',
-    description: 'Respondé preguntas sobre proyectos de ley, que promueven la reflexión y dejá tu opinión.',
-    icon: 'lucide:check-square'
-  },
-  {
-    title: 'Deja comentarios',
-    description: 'Tus comentarios lo valen. Contribuí con tus ideas y sugerencias para mejorar los proyectos de ley.',
-    icon: 'lucide:message-circle'
-  },
-  {
-    title: 'Hace preguntas',
-    description: 'Interactuá con el poder de la IA para obtener respuestas y aclarar tus dudas sobre los proyectos de ley.',
-    icon: 'lucide:help-circle'
-  }
-])
+// Si no hay un usuario logueado, agregar el boton a pageHeroLinks "Iniciar sesión" que redirija a /login
 
-const categorias = getCategorias();
+if (!loggedIn.value) {
+  pageHeroLinks.value.push({
+    label: 'Iniciar sesión',
+    to: '/auth/login',
+    variant: 'solid',
+    size: 'xl',
+    color: 'primary',
+    class: 'rounded-full px-6 font-title text-sm md:text-lg font-semibold',
+    trailingIcon: 'lucide:log-in'
+  })
+}
 
-  const actions = ref([{
-    label: 'Conocé mas',
-    trailingIcon: 'lucide:external-link',
-    variant: 'outline',
-    href: 'https://blog.democraciaenred.org/democracia-ia-c%C3%B3mo-puede-la-inteligencia-artificial-fortalecer-la-participaci%C3%B3n-ciudadana/',
-    target: '_blank'
-  }])
+const categorias = getCategorias()
+
 </script>
 
 <template>
-  <NuxtLayout name="default">
-    <UBanner icon="i-lucide-construction" title="Este prototipo esta en desarrollo" :actions="actions" close />
-    <UPageHero
-    description="La primera plataforma para integrar ciudadanía y legisladores para construir una argentina mejor"
-    :links="links"
-    orientation="horizontal"
-    >
-    <template #top>
-      <HeroBackground />
-    </template>
-    <template #title>
-      <AppLogo class="h-14 sm:h-16 md:h-20 w-auto mr-auto" />
-    </template>
-    <div class="relative rounded-xl overflow-hidden mx-auto max-w-4xl w-full">
-      <div class="bg-primary/40 dark:bg-primary/80 z-10 top-0 left-0 w-full h-full absolute mix-blend-multiply"></div>
-      <video class="rounded-lg" autoplay muted loop playsinline>
-        <source src="/congreso.mp4" type="video/mp4" />
-        Your browser does not support the video tag.
-      </video>
-    </div>
-  </UPageHero>
-      <USeparator />
+  <NuxtLayout name="home">
 
-      <UContainer class="relative max-w-5/6 mx-auto py-10">
-        <h2 class="text-3xl sm:text-5xl font-bold mb-8">
-          Explorá las categorias
-        </h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 mt-5">
-          <UPageCard :spotlight="true" :to="`/proyectos?categoria=${index}`" v-for="(categoria, index) in categorias" :key="`cat-${index}`" class="flex items-center justify-center hover:text-primary">
-            <p class="text-lg text-center font-bold">{{ categoria }}</p>
-          </UPageCard>
+    <UPageHero
+      :links="pageHeroLinks"
+      orientation="vertical"
+      class="relative overflow-hidden rounded-b-[3rem] md:rounded-b-[5rem]"
+      :ui="{
+        title: 'font-title',
+        description: 'font-title text-sm md:text-lg text-left', 
+        links: 'justify-start',
+        wrapper: 'md:mb-15',
+        headline: 'relative',
+      }"
+    >
+      <template #root>
+      </template>
+      <template #top>
+        <div class="absolute w-full max-w-[--ui-container] left-1/2 transform -translate-x-1/2 inset-0 z-10 flex items-start justify-end p-6">
+         <HomeVerticalIconHeader />
+       </div>
+        <div class="absolute inset-0 -z-10 pointer-events-none">
+          <video
+            class="h-full w-full object-cover"
+            autoplay
+            muted
+            loop
+            playsinline
+            preload="metadata"
+            poster="/congreso_first_frame.jpg"
+          >
+            <source
+              src="/congreso.mp4"
+              type="video/mp4"
+            >
+            Your browser does not support the video tag.
+          </video>
+
+          <div class="absolute inset-0 bg-linear-to-br from-primary/70 via-black/50 to-cyan-500/45" />
+          <div class="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-black/20" />
+          <HeroBackground class="opacity-40" />
         </div>
-        <LazyStarsBackground class="rotate-180" color="white" />
-      </UContainer>
-      <USeparator class="" />
-      <UPageSection
-        title="¿Qué podes hacer?"
-        description="Particiá en proyectos de ley, interactuá con el poder de la IA, y conocé más sobre las iniciativas legislativas de tu pais"
-        :features="features"
-        headline="🤔"
-        :ui="{
-          headline: 'text-5xl'
-        }"
+      </template>
+      <template #title>
+        <AppLogo
+          class="h-10 sm:h-12 md:h-15 w-auto mr-auto my-4"
+          current-color="#FFFFFF"
+        />
+      </template>
+      <template #description>
+        <p class="text-white text-md md:text-xl font-semibold sm:max-w-1/2">
+          La primera plataforma para integrar ciudadanía y legisladores para construir una argentina mejor
+        </p>
+      </template>
+    </UPageHero>
+    <UContainer>
+      <div class="bg-accented rounded-3xl p-12 mt-8 md:-mt-16 mb-8 relative z-10">
+        <div class="flex flex-col md:flex-row items-center justify-center space-y-6 md:space-y-0">
+          <div class="space-y-6 md:space-y-8">
+            <h2 class="font-title text-2xl sm:text-4xl font-bold">
+              ¿Que podes hacer?
+            </h2>
+            <p class="mb-0 md:mb-6">Participá en proyectos de ley, interactuá con el poder de la IA y conocé más sobre las iniciativas legislativas de tu país.</p>
+            <div class="hidden md:inline-flex gap-4 w-auto rounded-full bg-white dark:bg-violetita-200 dark:text-inverted hover:bg-primary-300 transition-colors items-center px-6 py-3 font-semibold cursor-pointer">
+              <img src="/ideitas.png" class="max-h-[60px] w-auto" />
+              <span class="text-xl font-title">Quiero aportar a proyectos</span>
+              <Icon name="lucide:arrow-right-circle" size="24" />
+            </div>
+          </div>
+          <div class="md:ml-12 md:flex flex-col space-y-6 md:space-y-8">
+            <div class="flex gap-8 items-center">
+              <img src="/resorte.png" class="max-w-[70px] md:max-w-[90px] w-auto" />
+              <p><b>Respondé preguntas</b><br />sobre proyectos de ley, que promueven la reflexión y dejá tu opinión.</p>
+            </div>
+            <div class="flex gap-8 items-center">
+              <img src="/bubble.png" class="max-w-[70px] md:max-w-[90px] w-auto" />
+              <p><b>Dejá comentarios</b><br />sobre los proyectos para contribuir al debate.</p>
+            </div>
+            <div class="flex gap-8 items-center">
+              <img src="/papelito.png" class="max-w-[70px] md:max-w-[90px] w-auto" />
+              <p><b>Hacé preguntas</b><br />sobre los proyectos para entenderlos mejor.</p>
+            </div>
+          </div>
+          <div class="flex md:hidden w-full justify-center gap-4 rounded-full bg-white hover:bg-verdecito-300 transition-colors items-center px-6 py-3 cursor-pointer">
+              <img src="/ideitas.png" class="max-h-[60px] w-auto" />
+              <span class="font-semibold md:text-lg font-title" >Quiero aportar a proyectos</span>
+              <Icon name="lucide:arrow-right-circle" size="24" />
+            </div>
+          </div>
+      </div>
+      <div class="bg-azulcito-100 rounded-3xl p-12 my-8 light">
+         <UPageCTA
+            title="¿Porqué surge demoIA?"
+            description="Creada para mejorar la calidad del debate público, visibilizar acuerdos y disensos e incorporar la voz ciudadana en la creación de leyes más representativas."
+            orientation="horizontal"
+            reverse
+            :ui="{
+              root: 'bg-transparent ring-0',
+              container: 'p-0!',
+              title: 'font-title text-3xl sm:text-5xl ',
+              description: 'text-lg sm:text-xl'
+            }"
+            >
+             <img
+                src="/idontknow.png"
+                alt="Illustration"
+                class="w-full rounded-lg"
+              />
+              <template #bottom>
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mt-10">
+                  <UPageFeature
+                    title="Participación con sentido"
+                    description="Creemos en una participación que tenga impacto real: los aportes ciudadanos se organizan y transforman en información útil para fortalecer el debate legislativo."
+                  />
+                  <UPageFeature
+                    title="Pluralidad"
+                    description="La plataforma busca reflejar la diversidad de voces que existen en torno a un proyecto de ley, sin imponer miradas únicas ni consensos forzados."
+                  />
+                  <UPageFeature
+                    title="Conocimiento abierto"
+                    description="Creemos que este proyecto debe aportar al conocimiento colectivo. Por eso, lo que desarrollamos se comparte como código abierto, para que pueda ser reutilizado, auditado y mejorado por otras personas y organizaciones."
+                  />
+                  <UPageFeature
+                    title="Transparencia"
+                    description="Buscamos una inteligencia artificial que funcione de forma clara y comprensible, para que cualquiera pueda entender cómo se procesan los aportes y cómo se construyen los resultados."
+                  />
+                </div>
+              </template>
+          </UPageCTA>
+      </div>
+      <div class="bg-accented rounded-3xl p-12">
+        <h2 class="font-title text-2xl sm:text-4xl font-bold my-8">
+          ¿Tenes preguntas?
+        </h2>
+        <HomeQuestions />
+      </div>
+    </UContainer>
+    <!-- <USeparator /> -->
+
+    <UContainer class="relative max-w-5/6 mx-auto py-10">
+      <h2 class="text-3xl sm:text-5xl font-bold mb-8">
+        Explorá las categorias
+      </h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 mt-5">
+        <UPageCard
+          v-for="(categoria, index) in categorias"
+          :key="`cat-${index}`"
+          :spotlight="true"
+          :to="`/proyectos?categoria=${index}`"
+          class="flex items-center justify-center hover:text-primary"
+        >
+          <p class="text-lg text-center font-bold">
+            {{ categoria }}
+          </p>
+        </UPageCard>
+      </div>
+      <LazyStarsBackground
+        class="rotate-180"
+        color="white"
       />
-      
-      <USeparator class="my-8" />
-      <UContainer class="text-center">
-        <p class="font-semibold">Trabajamos con la tecnología de Google Gemini</p>
-        <img src="https://1000logos.net/wp-content/uploads/2024/02/Gemini-Logo.png" alt="Gemini Logo" class="mx-auto mb-6 max-w-50"  />
-      </UContainer>
+    </UContainer>
+    <HomeLatestsPublishedProjects />
+    <!-- <USeparator class="" />
+    <UPageSection
+      title="¿Qué podes hacer?"
+      description="Particiá en proyectos de ley, interactuá con el poder de la IA, y conocé más sobre las iniciativas legislativas de tu pais"
+      :features="features"
+      headline="🤔"
+      :ui="{
+        headline: 'text-5xl'
+      }"
+    /> -->
+
+    <!-- <UBanner
+      icon="i-lucide-construction"
+      title="Este prototipo esta en desarrollo"
+      :actions="bannerActions"
+      close
+      :ui="{
+        root: 'z-0'
+      }"
+    /> -->
+    <UContainer class="text-center">
+
+    </UContainer>
   </NuxtLayout>
 </template>

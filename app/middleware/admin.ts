@@ -10,7 +10,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   if (user.value?.role !== 'admin') {
     return abortNavigation({
       statusCode: 403,
-      message: 'Access denied. Admin role required.',
+      message: 'Access denied. Admin role required.'
     })
   }
 })

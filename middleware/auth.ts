@@ -4,7 +4,7 @@
  */
 export default defineNuxtRouteMiddleware(async (to, from) => {
   const { loggedIn, fetch: fetchSession } = useUserSession()
-  
+
   // On client-side, check if we need to fetch session first
   if (import.meta.client && !loggedIn.value) {
     await fetchSession()

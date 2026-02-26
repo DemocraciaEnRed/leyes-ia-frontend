@@ -3,22 +3,22 @@ const { user, loggedIn, logout, isAdmin, isLegislator } = useAuth()
 const router = useRouter()
 
 const navigationLinks = [
-    {
+  {
     label: 'Home',
     to: '/',
     icon: 'lucide:home',
     children: []
-}, {
+  }, {
     label: 'Proyectos',
     to: '/proyectos',
-    icon: 'lucide:file',
+    icon: 'lucide:file'
   },
   {
     label: 'Acerca de',
     to: '/acerca-de',
-    icon: 'lucide:info',
+    icon: 'lucide:info'
   }
-];
+]
 
 const items = computed(() => {
   if (!loggedIn.value) {
@@ -52,26 +52,25 @@ const items = computed(() => {
       {
         label: 'Mis proyectos',
         icon: 'lucide:folder',
-        to: '/legislador/hubs'
+        to: '/cuenta/proyectos'
       },
       {
         label: 'Nuevo proyecto',
         icon: 'lucide:plus-circle',
-        to: '/legislador/hubs/nuevo'
+        to: '/proyectos/panel/nuevo'
       }
     ],
     [
       {
         label: 'Perfil',
         icon: 'lucide:user',
-        to: '/user/profile',
-        disabled: true,
+        to: '/user/perfil'
       },
       {
         label: 'Configuración',
         icon: 'lucide:settings',
-        disabled: true,
-      },
+        disabled: true
+      }
     ],
     [
       {
@@ -85,7 +84,7 @@ const items = computed(() => {
   // Add role-specific menu items
   if (isAdmin.value || isLegislator.value) {
     const roleItems: any[] = []
-    
+
     if (isAdmin.value) {
       roleItems.push({
         label: 'Admin Dashboard',
@@ -93,7 +92,7 @@ const items = computed(() => {
         to: '/admin/dashboard'
       })
     }
-    
+
     if (isLegislator.value) {
       roleItems.push({
         label: 'Propuestas Legislativas',
@@ -101,7 +100,7 @@ const items = computed(() => {
         to: '/legislator/proposals'
       })
     }
-    
+
     userMenuItems.push(roleItems)
   }
 
@@ -110,24 +109,41 @@ const items = computed(() => {
 </script>
 
 <template>
-    <UHeader>
-        <template #left>
-            <NuxtLink to="/" class="text-lg font-bold">
-               <AppLogo class="h-8 w-auto" />
-            </NuxtLink>
-        </template>
-        <UNavigationMenu :items="navigationLinks" />
-        <template #right>
-            <UColorModeButton />
+  <UHeader>
+    <template #left>
+      <NuxtLink
+        to="/"
+        class="text-lg font-bold"
+      >
+        <AppLogo class="h-8 w-auto" />
+      </NuxtLink>
+    </template>
+    <UNavigationMenu :items="navigationLinks" />
+    <template #right>
+      <UColorModeButton />
 
-            <UDropdownMenu :items="items" class="hidden lg:flex" :content="{ align: 'end', side: 'bottom', sideOffset: 8 }" :arrow="true">
-                <UButton icon="lucide:menu" color="neutral" variant="outline" class="cursor-pointer">
-                    Menú
-                </UButton>
-            </UDropdownMenu>
-        </template>
-      <template #body>
-        <UNavigationMenu :items="items" orientation="vertical" class="-mx-2.5" />
-      </template>
-    </UHeader>
+      <UDropdownMenu
+        :items="items"
+        class="hidden lg:flex"
+        :content="{ align: 'end', side: 'bottom', sideOffset: 8 }"
+        :arrow="true"
+      >
+        <UButton
+          icon="lucide:menu"
+          color="neutral"
+          variant="outline"
+          class="cursor-pointer"
+        >
+          Menú
+        </UButton>
+      </UDropdownMenu>
+    </template>
+    <template #body>
+      <UNavigationMenu
+        :items="items"
+        orientation="vertical"
+        class="-mx-2.5"
+      />
+    </template>
+  </UHeader>
 </template>

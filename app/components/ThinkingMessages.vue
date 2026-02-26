@@ -2,18 +2,18 @@
 import { ref, onUnmounted } from 'vue'
 
 const messages = [
-    'Ehhh... estoy pensando...',
-    'Uuuuhh... déjame analizar eso un momento.',
-    'Mmmm... procesando la información que me diste.',
-    'Ehhh... un momento, estoy reflexionando sobre eso.',
-    'Uuu... dejame pensar.. esta dificil...',
-    'Mmm... evaluando los datos proporcionados.',
-    'Ehhh.. Ya estoy con vos.. espera un toque...',
-    'Mmhhh.. dejame que busque algo..',
-    'Uff.. no me esperaba esto.. aguanta..',
-    'Ehhh... trabajando en ello, dame un segundo más.',
-    'Uff... casi listo, solo organizo mis ideas.',
-    'Aaaah... ya casi tengo algo para ti.'
+  'Ehhh... estoy pensando...',
+  'Uuuuhh... déjame analizar eso un momento.',
+  'Mmmm... procesando la información que me diste.',
+  'Ehhh... un momento, estoy reflexionando sobre eso.',
+  'Uuu... dejame pensar.. esta dificil...',
+  'Mmm... evaluando los datos proporcionados.',
+  'Ehhh.. Ya estoy con vos.. espera un toque...',
+  'Mmhhh.. dejame que busque algo..',
+  'Uff.. no me esperaba esto.. aguanta..',
+  'Ehhh... trabajando en ello, dame un segundo más.',
+  'Uff... casi listo, solo organizo mis ideas.',
+  'Aaaah... ya casi tengo algo para ti.'
 ]
 
 const typingSpeed = 40 // ms por caracter
@@ -26,38 +26,43 @@ let typingTimer = null
 let pauseTimer = null
 
 function startTyping() {
-    const full = messages[messageIndex]
-    let charIndex = 0
-    typedMessage.value = ''
+  const full = messages[messageIndex]
+  let charIndex = 0
+  typedMessage.value = ''
 
-    typingTimer = setInterval(() => {
-        typedMessage.value += full[charIndex]
-        charIndex++
-        if (charIndex >= full.length) {
-            clearInterval(typingTimer)
-            typingTimer = null
-            pauseTimer = setTimeout(() => {
-                messageIndex = (messageIndex + 1) % messages.length
-                startTyping()
-            }, pauseAfterFull)
-        }
-    }, typingSpeed)
+  typingTimer = setInterval(() => {
+    typedMessage.value += full[charIndex]
+    charIndex++
+    if (charIndex >= full.length) {
+      clearInterval(typingTimer)
+      typingTimer = null
+      pauseTimer = setTimeout(() => {
+        messageIndex = (messageIndex + 1) % messages.length
+        startTyping()
+      }, pauseAfterFull)
+    }
+  }, typingSpeed)
 }
 
 startTyping()
 
 onUnmounted(() => {
-    if (typingTimer) clearInterval(typingTimer)
-    if (pauseTimer) clearTimeout(pauseTimer)
+  if (typingTimer) clearInterval(typingTimer)
+  if (pauseTimer) clearTimeout(pauseTimer)
 })
 </script>
 
 <template>
-        <div class="text-sm">
-                <transition name="fade-slide" mode="out-in">
-                    <p :key="messageIndex">{{ typedMessage }}</p>
-                </transition>
-        </div>
+  <div class="text-sm">
+    <transition
+      name="fade-slide"
+      mode="out-in"
+    >
+      <p :key="messageIndex">
+        {{ typedMessage }}
+      </p>
+    </transition>
+  </div>
 </template>
 
 <style scoped>

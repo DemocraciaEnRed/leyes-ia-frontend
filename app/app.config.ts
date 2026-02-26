@@ -4,8 +4,14 @@ export default defineAppConfig({
       base: 'mt-8 pb-24 space-y-5'
     },
     colors: {
-      primary: 'blue',
-      neutral: 'slate'
+      primary: 'azulcito',
+      neutral: 'slate',
+      azulcito: 'azulcito',
+      verdecito: 'verdecito',
+      amarillito: 'amarillito',
+      violetita: 'violetita',
+      rojito: 'rojito',
+      naranjito: 'naranjito',
     },
     prose: {
       p: {
@@ -48,7 +54,7 @@ export default defineAppConfig({
       }
     }
   },
-   icon: {
+  icon: {
     mode: 'css',
     cssLayer: 'base'
   }
