@@ -30,7 +30,7 @@ const USER_KEY = 'auth_user'
 export const useAuth = () => {
   const config = useRuntimeConfig()
   const router = useRouter()
-  
+
   const user = useState<User | null>('auth_user', () => null)
   const isAuthenticated = computed(() => !!user.value)
 
@@ -42,7 +42,7 @@ export const useAuth = () => {
       const jsonPayload = decodeURIComponent(
         atob(base64)
           .split('')
-          .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+          .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
           .join('')
       )
       return JSON.parse(jsonPayload)
@@ -56,7 +56,7 @@ export const useAuth = () => {
   const isTokenExpired = (token: string): boolean => {
     const decoded = decodeToken(token)
     if (!decoded || !decoded.exp) return true
-    
+
     // Check if token expires in the next 5 seconds
     return decoded.exp * 1000 < Date.now() + 5000
   }
@@ -90,7 +90,7 @@ export const useAuth = () => {
   }
 
   // Login function
-  const login = async (credentials: LoginCredentials): Promise<{ success: boolean; error?: string }> => {
+  const login = async (credentials: LoginCredentials): Promise<{ success: boolean, error?: string }> => {
     try {
       const response = await $fetch<AuthResponse>(`${config.public.backendUrl}/auth/login`, {
         method: 'POST',
@@ -110,15 +110,15 @@ export const useAuth = () => {
       return { success: false, error: 'Invalid response from server' }
     } catch (error: any) {
       console.error('Login error:', error)
-      return { 
-        success: false, 
-        error: error.data?.message || error.message || 'Login failed' 
+      return {
+        success: false,
+        error: error.data?.message || error.message || 'Login failed'
       }
     }
   }
 
   // Signup function
-  const signup = async (credentials: SignupCredentials): Promise<{ success: boolean; error?: string }> => {
+  const signup = async (credentials: SignupCredentials): Promise<{ success: boolean, error?: string }> => {
     try {
       const response = await $fetch<AuthResponse>(`${config.public.backendUrl}/auth/signup`, {
         method: 'POST',
@@ -138,9 +138,9 @@ export const useAuth = () => {
       return { success: false, error: 'Invalid response from server' }
     } catch (error: any) {
       console.error('Signup error:', error)
-      return { 
-        success: false, 
-        error: error.data?.message || error.message || 'Signup failed' 
+      return {
+        success: false,
+        error: error.data?.message || error.message || 'Signup failed'
       }
     }
   }

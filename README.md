@@ -58,3 +58,19 @@ pnpm preview
 ```
 
 Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+
+## Frontend route conventions (Leyes-IA)
+
+- Project public Hub pages:
+  - `/proyectos`
+  - `/proyectos/:projectSlug`
+
+- Project management panel (canonical):
+  - `/proyectos/panel/...`
+
+- User-account entry for owned/managed projects:
+  - `/cuenta/proyectos`
+
+### Backward compatibility
+
+Legacy pages under `/legislador/hubs/...` are still available and are aliased to the new route structure via Nuxt page routing hooks.

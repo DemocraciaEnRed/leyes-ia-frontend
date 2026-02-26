@@ -31,7 +31,7 @@ export async function $authFetch<T>(url: string, options: any = {}) {
 
   try {
     const token = getToken()
-    
+
     return await $fetch<T>(url, {
       ...options,
       headers: {
