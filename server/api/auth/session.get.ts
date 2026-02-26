@@ -6,7 +6,7 @@ export default defineEventHandler(async (event) => {
 
   if (!session || !(session as any).token || !(session as any).user) {
     return {
-      user: null,
+      user: null
     }
   }
 
@@ -27,9 +27,9 @@ export default defineEventHandler(async (event) => {
           .join('')
       )
       const decoded = JSON.parse(jsonPayload)
-      
+
       if (!decoded.exp) return true
-      
+
       // Check if token expires in the next 5 seconds
       return decoded.exp * 1000 < Date.now() + 5000
     } catch (error) {
@@ -69,6 +69,6 @@ export default defineEventHandler(async (event) => {
   */
 
   return {
-    user: authSession.user,
+    user: authSession.user
   }
 })

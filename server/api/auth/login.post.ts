@@ -6,17 +6,17 @@ export default defineEventHandler(async (event) => {
   const body = await readBody<LoginCredentials>(event)
 
   try {
-    console.log("Login attempt for email:", body.email);
-    console.log("Using API URL:", config.public.backendUrl);
+    console.log('Login attempt for email:', body.email)
+    console.log('Using API URL:', config.public.backendUrl)
     // Call external API to authenticate
     const response = await $fetch<AuthResponse>(`${config.public.backendUrl}/auth/login`, {
       method: 'POST',
       body: {
         email: body.email,
-        password: body.password,
-      },
+        password: body.password
+      }
     })
-    console.log("Login response received:", response);
+    console.log('Login response received:', response)
 
     // Create session with token and user data
     const session: AuthSession = {
@@ -32,12 +32,12 @@ export default defineEventHandler(async (event) => {
 
     // Return user data
     return {
-      user: response.user,
+      user: response.user
     }
   } catch (error: any) {
     throw createError({
       statusCode: error.statusCode || 401,
-      message: error.data?.message || 'Invalid credentials',
+      message: error.data?.message || 'Invalid credentials'
     })
   }
 })

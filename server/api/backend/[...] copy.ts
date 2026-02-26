@@ -1,11 +1,11 @@
 /**
  * Catch-all proxy route for the Express backend API
- * 
+ *
  * This route:
  * 1. Requires user to be authenticated (has a valid session)
  * 2. Gets the JWT token from the secure session (not accessible on client)
  * 3. Forwards the request to the Express backend with the Authorization header
- * 
+ *
  * Usage from client:
  *   $fetch('/api/backend/projects')        -> GET  {apiUrl}/projects
  *   $fetch('/api/backend/projects/123')    -> GET  {apiUrl}/projects/123
@@ -14,10 +14,10 @@
 export default defineEventHandler(async (event) => {
   // Require authenticated session - throws 401 if not authenticated
   const session = await requireUserSession(event)
-  
+
   // Get the JWT token from the secure session data
   const { token } = session.secure || {}
-  
+
   if (!token) {
     throw createError({
       statusCode: 401,
@@ -27,7 +27,7 @@ export default defineEventHandler(async (event) => {
 
   // Get the path after /api/backend/
   const path = event.path.replace(/^\/api\/backend/, '') || '/'
-  
+
   // Get the backend API URL from runtime config
   const config = useRuntimeConfig()
   const backendUrl = `${config.public.backendUrl}${path}`
@@ -35,7 +35,7 @@ export default defineEventHandler(async (event) => {
   // Get request method and body
   const method = event.method
   let body = undefined
-  
+
   if (['POST', 'PUT', 'PATCH'].includes(method)) {
     body = await readBody(event)
   }

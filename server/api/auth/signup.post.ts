@@ -14,7 +14,7 @@ export default defineEventHandler(async (event) => {
         firstName: body.firstName,
         lastName: body.lastName,
         magicWord: body.magicWord
-      },
+      }
     })
 
     // Create session with token and user data
@@ -31,12 +31,12 @@ export default defineEventHandler(async (event) => {
 
     // Return user data (token is in httpOnly cookie)
     return {
-      user: response.user,
+      user: response.user
     }
   } catch (error: any) {
     throw createError({
       statusCode: error.statusCode || 400,
-      message: error.data?.message || 'Registration failed',
+      message: error.data?.message || 'Registration failed'
     })
   }
 })

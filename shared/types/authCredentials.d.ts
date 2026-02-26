@@ -1,9 +1,9 @@
 export interface AuthSession {
-    user: User,
-    secure: {
-        token: string
-    },
-    loggedInAt: number
+  user: User
+  secure: {
+    token: string
+  }
+  loggedInAt: number
 }
 
 export interface LoginCredentials {
