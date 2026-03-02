@@ -1,16 +1,90 @@
 <script setup>
-import { getQuestionTypeLabel } from '~/utils/getQuestionTypeLabel'
-
-const runtimeConfig = useRuntimeConfig()
-
 definePageMeta({
   layout: 'workspace'
 })
 const route = useRoute()
 const projectId = route.params.projectId
 const surveyId = route.params.surveyId
+const toast = useToast()
+const actionLoading = ref(false)
 
 const { data: dataResponse, pending, error, refresh } = await useFetch(`/api/backend/projects/${projectId}/manage/surveys/${surveyId}`)
+
+const canBeFeatured = computed(() => {
+  const survey = dataResponse.value?.survey
+
+  if (!survey) {
+    return false
+  }
+
+  if (!survey.public || !survey.visible) {
+    return false
+  }
+
+  if (!survey.closedAt) {
+    return true
+  }
+
+  return new Date(survey.closedAt).getTime() > Date.now()
+})
+
+const canEdit = computed(() => Boolean(dataResponse.value?.survey?.canEdit))
+
+const setFeaturedSurvey = async () => {
+  actionLoading.value = true
+
+  try {
+    await $authFetch(`/api/backend/projects/${projectId}/manage/surveys/${surveyId}/featured`, {
+      method: 'POST'
+    })
+
+    toast.add({
+      color: 'success',
+      icon: 'lucide:star',
+      title: 'Encuesta destacada actualizada',
+      description: 'La encuesta ahora es la destacada del proyecto.'
+    })
+
+    await refresh()
+  } catch (fetchError) {
+    toast.add({
+      color: 'error',
+      icon: 'lucide:alert-circle',
+      title: 'No se pudo destacar la encuesta',
+      description: fetchError?.data?.error || fetchError?.message || 'Ocurrió un error inesperado.'
+    })
+  } finally {
+    actionLoading.value = false
+  }
+}
+
+const clearFeaturedSurvey = async () => {
+  actionLoading.value = true
+
+  try {
+    await $authFetch(`/api/backend/projects/${projectId}/manage/surveys/featured`, {
+      method: 'DELETE'
+    })
+
+    toast.add({
+      color: 'neutral',
+      icon: 'lucide:star-off',
+      title: 'Encuesta destacada removida',
+      description: 'El proyecto ya no tiene encuesta destacada.'
+    })
+
+    await refresh()
+  } catch (fetchError) {
+    toast.add({
+      color: 'error',
+      icon: 'lucide:alert-circle',
+      title: 'No se pudo quitar la destacada',
+      description: fetchError?.data?.error || fetchError?.message || 'Ocurrió un error inesperado.'
+    })
+  } finally {
+    actionLoading.value = false
+  }
+}
 </script>
 
 <template>
@@ -38,6 +112,46 @@ const { data: dataResponse, pending, error, refresh } = await useFetch(`/api/bac
       <p class="text-muted mb-6">
         {{ dataResponse?.survey.about }}
       </p>
+      <div class="mb-6 flex flex-wrap gap-2">
+        <UBadge
+          v-if="dataResponse?.survey.isFeatured"
+          color="warning"
+          variant="soft"
+          icon="lucide:star"
+        >
+          Encuesta destacada
+        </UBadge>
+        <UButton
+          v-if="!dataResponse?.survey.isFeatured"
+          icon="lucide:star"
+          color="warning"
+          variant="outline"
+          :disabled="!canBeFeatured || actionLoading"
+          :loading="actionLoading"
+          @click="setFeaturedSurvey()"
+        >
+          Destacar encuesta
+        </UButton>
+        <UButton
+          v-else
+          icon="lucide:star-off"
+          color="neutral"
+          variant="outline"
+          :loading="actionLoading"
+          @click="clearFeaturedSurvey()"
+        >
+          Quitar destacada
+        </UButton>
+        <UButton
+          v-if="canEdit"
+          icon="lucide:pencil"
+          color="primary"
+          variant="outline"
+          :to="`/proyectos/panel/${projectId}/encuestas/${surveyId}/editar`"
+        >
+          Editar encuesta
+        </UButton>
+      </div>
       <USeparator />
       <h2 class="text-xl font-semibold mt-6 mb-4">
         Configuración
@@ -45,89 +159,89 @@ const { data: dataResponse, pending, error, refresh } = await useFetch(`/api/bac
 
       <table class="w-full mb-6 table-auto border-collapse border border-accented text-sm">
         <tbody>
-        <tr>
-          <td class="border border-accented bg-accented/35 font-semibold p-2">
-            ID de la encuesta:
-          </td>
-          <td class="border border-accented p-2">
-            {{ dataResponse?.survey.id }}
-          </td>
-        </tr>
-        <tr>
-          <td class="border border-accented bg-accented/35 font-semibold p-2">
-            Fecha de creación:
-          </td>
-          <td class="border border-accented p-2">
-            {{ new Date(dataResponse?.survey.createdAt).toLocaleDateString() }} a las {{ new Date(dataResponse?.survey.createdAt).toLocaleTimeString() }}
-          </td>
-        </tr>
-        <!-- closedAt -->
-        <tr>
-          <td class="border border-accented bg-accented/35 font-semibold p-2">
-            Fecha de cierre:
-          </td>
-          <td
-            v-if="dataResponse?.survey.closedAt"
-            class="border border-accented p-2"
-          >
-            {{ new Date(dataResponse?.survey.closedAt).toLocaleDateString() }} a las {{ new Date(dataResponse?.survey.closedAt).toLocaleTimeString() }}
-          </td>
-          <td
-            v-else
-            class="border border-accented p-2"
-          >
-            No establecida
-          </td>
-        </tr>
+          <tr>
+            <td class="border border-accented bg-accented/35 font-semibold p-2">
+              ID de la encuesta:
+            </td>
+            <td class="border border-accented p-2">
+              {{ dataResponse?.survey.id }}
+            </td>
+          </tr>
+          <tr>
+            <td class="border border-accented bg-accented/35 font-semibold p-2">
+              Fecha de creación:
+            </td>
+            <td class="border border-accented p-2">
+              {{ new Date(dataResponse?.survey.createdAt).toLocaleDateString() }} a las {{ new Date(dataResponse?.survey.createdAt).toLocaleTimeString() }}
+            </td>
+          </tr>
+          <!-- closedAt -->
+          <tr>
+            <td class="border border-accented bg-accented/35 font-semibold p-2">
+              Fecha de cierre:
+            </td>
+            <td
+              v-if="dataResponse?.survey.closedAt"
+              class="border border-accented p-2"
+            >
+              {{ new Date(dataResponse?.survey.closedAt).toLocaleDateString() }} a las {{ new Date(dataResponse?.survey.closedAt).toLocaleTimeString() }}
+            </td>
+            <td
+              v-else
+              class="border border-accented p-2"
+            >
+              No establecida
+            </td>
+          </tr>
 
-        <tr>
-          <td class="border border-accented bg-accented/35 font-semibold p-2">
-            Número de preguntas:
-          </td>
-          <td class="border border-accented p-2">
-            {{ dataResponse?.survey.questions.length }}
-          </td>
-        </tr>
-        <tr>
-          <td class="border border-accented bg-accented/35 font-semibold p-2">
-            Número de respuestas:
-          </td>
-          <td class="border border-accented p-2">
-            {{ dataResponse?.survey.responsesCount }}
-          </td>
-        </tr>
-        <tr>
-          <td class="border border-accented bg-accented/35 font-semibold p-2">
-            Visible para encuestados:
-          </td>
-          <td class="border border-accented p-2">
-            {{ dataResponse?.survey.visible ? 'Sí' : 'No' }}
-          </td>
-        </tr>
-        <tr>
-          <td class="border border-accented bg-accented/35 font-semibold p-2">
-            Permitir respuestas anónimas:
-          </td>
-          <td class="border border-accented p-2">
-            {{ dataResponse?.survey.allowAnonymousResponses ? 'Sí' : 'No' }}
-          </td>
-        </tr>
-        <tr>
-          <td class="border border-accented bg-accented/35 font-semibold p-2">
-            Publica
-          </td>
-          <td class="border border-accented p-2">
-            {{ dataResponse?.survey.public ? 'Sí' : 'No' }}
-          </td>
-        </tr>
-        <tr>
-          <td class="border border-accented bg-accented/35 font-semibold p-2">
-            Tipo de encuesta:
-          </td>
-          <td class="border border-accented p-2">
-            {{ getSurveyType(dataResponse?.survey.type) }}
-          </td>
-        </tr>
+          <tr>
+            <td class="border border-accented bg-accented/35 font-semibold p-2">
+              Número de preguntas:
+            </td>
+            <td class="border border-accented p-2">
+              {{ dataResponse?.survey.questions.length }}
+            </td>
+          </tr>
+          <tr>
+            <td class="border border-accented bg-accented/35 font-semibold p-2">
+              Número de respuestas:
+            </td>
+            <td class="border border-accented p-2">
+              {{ dataResponse?.survey.responsesCount }}
+            </td>
+          </tr>
+          <tr>
+            <td class="border border-accented bg-accented/35 font-semibold p-2">
+              Visible para encuestados:
+            </td>
+            <td class="border border-accented p-2">
+              {{ dataResponse?.survey.visible ? 'Sí' : 'No' }}
+            </td>
+          </tr>
+          <tr>
+            <td class="border border-accented bg-accented/35 font-semibold p-2">
+              Permitir respuestas anónimas:
+            </td>
+            <td class="border border-accented p-2">
+              {{ dataResponse?.survey.allowAnonymousResponses ? 'Sí' : 'No' }}
+            </td>
+          </tr>
+          <tr>
+            <td class="border border-accented bg-accented/35 font-semibold p-2">
+              Publica
+            </td>
+            <td class="border border-accented p-2">
+              {{ dataResponse?.survey.public ? 'Sí' : 'No' }}
+            </td>
+          </tr>
+          <tr>
+            <td class="border border-accented bg-accented/35 font-semibold p-2">
+              Tipo de encuesta:
+            </td>
+            <td class="border border-accented p-2">
+              {{ getSurveyType(dataResponse?.survey.type) }}
+            </td>
+          </tr>
         </tbody>
       </table>
       <USeparator />
@@ -184,93 +298,14 @@ const { data: dataResponse, pending, error, refresh } = await useFetch(`/api/bac
         </div>
       </UPageCard>
       <USeparator />
-      <h2 class="text-xl font-semibold mt-6 mb-4">
-        Preguntas de la encuesta
-      </h2>
-      <UPageCard
-        v-for="(question, index) in dataResponse?.survey.questions"
-        :key="index"
-        variant="outline"
-        class="bg-elevated<"
-      >
-        <div class="flex justify-between items-start gap-4">
-          <div class="flex-1 space-y-3">
-            <div class="flex items-start gap-3">
-              <UBadge
-                color="primary"
-                variant="subtle"
-              >
-                {{ index + 1 }}
-              </UBadge>
-              <div class="flex-1">
-                <h3 class="text-lg font-semibold">
-                  {{ question.questionText }}
-                </h3>
-              </div>
-            </div>
-            <div
-              v-if="question.helpText"
-              class="text-sm text-gray-600 dark:text-gray-400"
-            >
-              <span class="font-medium" /> {{ question.helpText }}
-            </div>
-
-            <div class="flex gap-2 flex-wrap">
-              <UBadge
-                color="neutral"
-                variant="subtle"
-              >
-                {{ getQuestionTypeLabel(question.type) }}
-              </UBadge>
-              <UBadge
-                v-if="question.scale"
-                color="neutral"
-                variant="subtle"
-              >
-                Escala: 1-{{ question.scale }}
-              </UBadge>
-              <UBadge
-                v-if="question.maxLength"
-                color="neutral"
-                variant="subtle"
-              >
-                Máx: {{ question.maxLength }} caracteres
-              </UBadge>
-              <UBadge
-                v-if="question.required"
-                color="error"
-                variant="subtle"
-              >
-                Obligatoria
-              </UBadge>
-              <UBadge
-                v-else
-                color="neutral"
-                variant="subtle"
-              >
-                Opcional
-              </UBadge>
-            </div>
-
-            <div
-              v-if="question.options && question.options.length > 0"
-              class="space-y-1"
-            >
-              <p class="text-sm font-medium text-gray-700 dark:text-gray-300">
-                Opciones:
-              </p>
-              <ul class="list-disc list-inside space-y-1 text-sm text-gray-600 dark:text-gray-400">
-                <li
-                  v-for="(option, optIndex) in question.options"
-                  :key="optIndex"
-                >
-                  {{ option }}
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </UPageCard>
+      <SurveyQuestionsListCard
+        title="Preguntas de la encuesta"
+        :questions="dataResponse?.survey.questions || []"
+        :can-add="false"
+        :can-edit="false"
+        :can-reorder="false"
+        :can-delete="false"
+      />
     </UPageBody>
   </NuxtLayout>
 </template>
