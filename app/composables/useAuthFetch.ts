@@ -31,7 +31,7 @@ export function useAuthFetch<T>(
 
   return useFetch<T>(url, {
     ...options,
-    onResponseError({ response }) {
+    onResponseError({ response }: { response: { status: number } }) {
       // Handle 401 errors by clearing the session
       if (response.status === 401) {
         clear()

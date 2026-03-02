@@ -32,8 +32,8 @@ export default defineNuxtConfig({
   css: ['~/assets/css/main.css'],
   runtimeConfig: {
     public: {
-      backendUrl: process.env.NUXT_BACKEND_URL || 'http://localhost:4000',
-      frontendUrl: process.env.NUXT_FRONTEND_URL || 'http://localhost:3000'
+      backendUrl: import.meta.env.NUXT_BACKEND_URL || 'http://localhost:4000',
+      frontendUrl: import.meta.env.NUXT_FRONTEND_URL || 'http://localhost:3000'
     }
   },
   
