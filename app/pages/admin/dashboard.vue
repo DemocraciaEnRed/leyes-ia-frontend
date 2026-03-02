@@ -69,6 +69,15 @@ const formatCurrencyUsd = (value: unknown) => {
   }).format(numeric)
 }
 
+type HeadlineBadgeColor = 'info' | 'secondary' | 'primary' | 'warning'
+type HeadlineCard = {
+  title: string
+  icon: string
+  value: string
+  badgeColor: HeadlineBadgeColor
+  badgeLabel: string
+}
+
 const headlineCards = computed(() => {
   const totals = usage.value?.totals || {}
   const intervalLabel = usage.value?.filters?.resolvedInterval || 'day'
@@ -97,7 +106,7 @@ const headlineCards = computed(() => {
     value: formatCurrencyUsd(totals.estimatedCostUsd),
     badgeColor: 'warning',
     badgeLabel: 'Estimado'
-  }]
+  }] as HeadlineCard[]
 })
 
 const topActions = computed(() => (usage.value?.byAction || []).slice(0, 8))

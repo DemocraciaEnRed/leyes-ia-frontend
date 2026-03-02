@@ -1,8 +1,4 @@
 <script setup>
-import { getQuestionTypeLabel } from '~/utils/getQuestionTypeLabel'
-
-const runtimeConfig = useRuntimeConfig()
-
 definePageMeta({
   layout: 'workspace'
 })
@@ -10,7 +6,7 @@ const route = useRoute()
 const projectId = route.params.projectId
 const surveyId = route.params.surveyId
 
-const { data: dataResponse, pending, error, refresh } = await useFetch(`/api/backend/projects/${projectId}/manage/surveys/${surveyId}`)
+const { data: dataResponse, pending, error } = await useFetch(`/api/backend/projects/${projectId}/manage/surveys/${surveyId}`)
 </script>
 
 <template>
@@ -182,93 +178,14 @@ const { data: dataResponse, pending, error, refresh } = await useFetch(`/api/bac
         </div>
       </UPageCard>
       <USeparator />
-      <h2 class="text-xl font-semibold mt-6 mb-4">
-        Preguntas de la encuesta
-      </h2>
-      <UPageCard
-        v-for="(question, index) in dataResponse?.survey.questions"
-        :key="index"
-        variant="outline"
-        class="bg-elevated<"
-      >
-        <div class="flex justify-between items-start gap-4">
-          <div class="flex-1 space-y-3">
-            <div class="flex items-start gap-3">
-              <UBadge
-                color="primary"
-                variant="subtle"
-              >
-                {{ index + 1 }}
-              </UBadge>
-              <div class="flex-1">
-                <h3 class="text-lg font-semibold">
-                  {{ question.questionText }}
-                </h3>
-              </div>
-            </div>
-            <div
-              v-if="question.helpText"
-              class="text-sm text-gray-600 dark:text-gray-400"
-            >
-              <span class="font-medium" /> {{ question.helpText }}
-            </div>
-
-            <div class="flex gap-2 flex-wrap">
-              <UBadge
-                color="neutral"
-                variant="subtle"
-              >
-                {{ getQuestionTypeLabel(question.type) }}
-              </UBadge>
-              <UBadge
-                v-if="question.scale"
-                color="neutral"
-                variant="subtle"
-              >
-                Escala: 1-{{ question.scale }}
-              </UBadge>
-              <UBadge
-                v-if="question.maxLength"
-                color="neutral"
-                variant="subtle"
-              >
-                Máx: {{ question.maxLength }} caracteres
-              </UBadge>
-              <UBadge
-                v-if="question.required"
-                color="error"
-                variant="subtle"
-              >
-                Obligatoria
-              </UBadge>
-              <UBadge
-                v-else
-                color="neutral"
-                variant="subtle"
-              >
-                Opcional
-              </UBadge>
-            </div>
-
-            <div
-              v-if="question.options && question.options.length > 0"
-              class="space-y-1"
-            >
-              <p class="text-sm font-medium text-gray-700 dark:text-gray-300">
-                Opciones:
-              </p>
-              <ul class="list-disc list-inside space-y-1 text-sm text-gray-600 dark:text-gray-400">
-                <li
-                  v-for="(option, optIndex) in question.options"
-                  :key="optIndex"
-                >
-                  {{ option }}
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </UPageCard>
+      <SurveyQuestionsListCard
+        title="Preguntas de la encuesta"
+        :questions="dataResponse?.survey.questions || []"
+        :can-add="false"
+        :can-edit="false"
+        :can-reorder="false"
+        :can-delete="false"
+      />
     </UPageBody>
   </NuxtLayout>
 </template>
