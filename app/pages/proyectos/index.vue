@@ -6,25 +6,11 @@ const router = useRouter()
 
 const PLACEHOLDER_COVER_URL = 'https://placehold.co/1200x630?text=Proyecto+de+Ley'
 
-const categorias = [
-  'Asuntos Constitucionales',
-  'Economía y Hacienda',
-  'Educación y Cultura',
-  'Salud Pública',
-  'Justicia y Derechos Humanos',
-  'Seguridad y Defensa',
-  'Trabajo y Seguridad Social',
-  'Medio Ambiente y Recursos Naturales',
-  'Ciencia, Tecnología e Innovación',
-  'Relaciones Exteriores',
-  'Infraestructura y Transporte',
-  'Agricultura, Ganadería y Pesca',
-  'Género y Diversidad',
-  'Desarrollo Social y Niñez'
-]
+const categorias = getCategorias()
+const categoryDrawerOpen = ref(false)
 
 const categorySelected = computed(() => {
-  const rawValue = route.query.category
+  const rawValue = route.query.categoria
   const parsed = Number.parseInt(Array.isArray(rawValue) ? rawValue[0] : rawValue, 10)
 
   if (Number.isNaN(parsed) || parsed < 0 || parsed >= categorias.length) {
@@ -32,6 +18,40 @@ const categorySelected = computed(() => {
   }
 
   return parsed
+})
+
+const selectedCategoryLabel = computed(() => {
+  if (categorySelected.value === undefined) {
+    return undefined
+  }
+
+  return categorias[categorySelected.value]
+})
+
+const categoryFilterButtonLabel = computed(() => {
+  if (selectedCategoryLabel.value) {
+    return selectedCategoryLabel.value
+  }
+
+  return 'Todas las categorías'
+})
+
+const desktopCategory = computed({
+  get: () => selectedCategoryLabel.value,
+  set: (value) => {
+    if (!value) {
+      clearCategory()
+      return
+    }
+
+    const categoryIndex = categorias.indexOf(value)
+
+    if (categoryIndex === -1) {
+      return
+    }
+
+    toggleCategory(categoryIndex)
+  }
 })
 
 const queryParams = computed(() => {
@@ -77,15 +97,36 @@ const toggleCategory = async (categoryIndex) => {
   const nextQuery = { ...route.query }
 
   if (categorySelected.value === categoryIndex) {
-    delete nextQuery.category
+    delete nextQuery.categoria
   } else {
-    nextQuery.category = String(categoryIndex)
+    nextQuery.categoria = String(categoryIndex)
   }
 
   await router.push({
     path: '/proyectos',
     query: nextQuery
   })
+}
+
+const clearCategory = async () => {
+  const nextQuery = { ...route.query }
+
+  delete nextQuery.categoria
+
+  await router.push({
+    path: '/proyectos',
+    query: nextQuery
+  })
+}
+
+const selectCategoryFromDrawer = async (categoryIndex) => {
+  await toggleCategory(categoryIndex)
+  categoryDrawerOpen.value = false
+}
+
+const clearCategoryFromDrawer = async () => {
+  await clearCategory()
+  categoryDrawerOpen.value = false
 }
 </script>
 
@@ -98,21 +139,77 @@ const toggleCategory = async (categoryIndex) => {
         container: 'gap-8 sm:gap-y-10 py-12 sm:py-14 lg:pt-18 lg:pb-5'
       }"
     >
-    <div class="flex flex-col items-center gap-3 justify-center">
-      <p class="font-semibold">Seleccione una categoría</p>
-      <div class="flex justify-center flex-wrap items-center">
-        <UButton
-        v-for="(categoria, index) in categorias"
-        :key="index"
-        class="m-1 rounded-full text-xs sm:text-sm"
-        :variant="getVariant(index)"
-        color="verdecito"
-        @click="toggleCategory(index)"
+      <div class="flex flex-col items-center gap-3 justify-center w-full">
+        <p class="font-semibold">
+          Seleccioná una categoría
+        </p>
+
+        <UDrawer
+          v-model:open="categoryDrawerOpen"
+          title="Seleccionar categoría"
+          description="Elegí una categoría para filtrar los proyectos"
+          class="w-full md:hidden"
         >
-        {{ categoria }}
-      </UButton>
-    </div>
-  </div>
+          <UButton
+            :label="categoryFilterButtonLabel"
+            color="verdecito"
+            variant="outline"
+            trailing-icon="i-lucide-chevron-up"
+            class="w-full max-w-sm justify-between rounded-full"
+          />
+
+          <template #body>
+            <div class="flex flex-col gap-2 pb-4">
+              <UButton
+                label="Todas las categorías"
+                color="verdecito"
+                :variant="categorySelected === undefined ? 'solid' : 'outline'"
+                class="justify-start"
+                @click="clearCategoryFromDrawer"
+              />
+              <UButton
+                v-for="(categoria, index) in categorias"
+                :key="`drawer-${index}`"
+                :label="categoria"
+                color="verdecito"
+                :variant="getVariant(index)"
+                class="justify-start"
+                @click="selectCategoryFromDrawer(index)"
+              />
+            </div>
+          </template>
+        </UDrawer>
+
+        <div class="hidden md:block w-full max-w-sm">
+          <USelect
+            v-model="desktopCategory"
+            :items="categorias"
+            placeholder="Todas las categorías"
+            class="w-full"
+          />
+        </div>
+
+        <div
+          v-if="selectedCategoryLabel"
+          class="flex items-center gap-2 flex-wrap justify-center"
+        >
+          <UBadge
+            color="verdecito"
+            variant="subtle"
+            class="rounded-full"
+          >
+            Filtrando por: {{ selectedCategoryLabel }}
+          </UBadge>
+          <UButton
+            label="Limpiar"
+            size="xs"
+            variant="ghost"
+            color="neutral"
+            icon="i-lucide-x"
+            @click="clearCategory"
+          />
+        </div>
+      </div>
     </UPageHero>
     <USeparator
       icon="i-lucide-book"

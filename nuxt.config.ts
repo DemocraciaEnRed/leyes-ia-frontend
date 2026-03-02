@@ -58,43 +58,43 @@ export default defineNuxtConfig({
   // },
 
   compatibilityDate: '2025-01-15',
-  hooks: {
-    'pages:extend'(pages) {
-      const panelPrefix = '/proyectos/panel'
-      const legacyPrefix = '/legislador/hubs'
-      const accountProjectsPath = '/cuenta/proyectos'
+  // hooks: {
+  //   'pages:extend'(pages) {
+  //     const panelPrefix = '/proyectos/panel'
+  //     const legacyPrefix = '/legislador/hubs'
+  //     const accountProjectsPath = '/cuenta/proyectos'
 
-      const visit = (items: any[]) => {
-        for (const page of items) {
-          if (typeof page.path === 'string' && page.path.startsWith(panelPrefix)) {
-            const suffix = page.path.slice(panelPrefix.length)
-            const aliases = Array.isArray(page.alias)
-              ? page.alias
-              : (page.alias ? [page.alias] : [])
+  //     const visit = (items: any[]) => {
+  //       for (const page of items) {
+  //         if (typeof page.path === 'string' && page.path.startsWith(panelPrefix)) {
+  //           const suffix = page.path.slice(panelPrefix.length)
+  //           const aliases = Array.isArray(page.alias)
+  //             ? page.alias
+  //             : (page.alias ? [page.alias] : [])
 
-            aliases.push(`${legacyPrefix}${suffix}`)
+  //           aliases.push(`${legacyPrefix}${suffix}`)
 
-            page.alias = Array.from(new Set(aliases))
-          }
+  //           page.alias = Array.from(new Set(aliases))
+  //         }
 
-          if (page.path === accountProjectsPath) {
-            const aliases = Array.isArray(page.alias)
-              ? page.alias
-              : (page.alias ? [page.alias] : [])
+  //         if (page.path === accountProjectsPath) {
+  //           const aliases = Array.isArray(page.alias)
+  //             ? page.alias
+  //             : (page.alias ? [page.alias] : [])
 
-            aliases.push(legacyPrefix)
-            page.alias = Array.from(new Set(aliases))
-          }
+  //           aliases.push(legacyPrefix)
+  //           page.alias = Array.from(new Set(aliases))
+  //         }
 
-          if (Array.isArray(page.children) && page.children.length > 0) {
-            visit(page.children)
-          }
-        }
-      }
+  //         if (Array.isArray(page.children) && page.children.length > 0) {
+  //           visit(page.children)
+  //         }
+  //       }
+  //     }
 
-      visit(pages as any[])
-    }
-  },
+  //     visit(pages as any[])
+  //   }
+  // },
 
   eslint: {
     config: {
