@@ -1,120 +1,104 @@
 <script setup lang="ts">
 const { user, loggedIn, logout, isAdmin, isLegislator } = useAuth()
-const router = useRouter()
 import type { DropdownMenuItem } from '@nuxt/ui'
 
-const items = ref<DropdownMenuItem[][]>([
-  [
-    {
-      label: 'Benjamin',
-      avatar: {
-        src: 'https://github.com/benjamincanac.png'
-      },
-      type: 'label'
-    }
-  ],
-  [
-    {
-      label: 'Profile',
-      icon: 'i-lucide-user'
-    },
-    {
-      label: 'Billing',
-      icon: 'i-lucide-credit-card'
-    },
-    {
-      label: 'Settings',
-      icon: 'i-lucide-cog',
-      kbds: [',']
-    },
-    {
-      label: 'Keyboard shortcuts',
-      icon: 'i-lucide-monitor'
-    }
-  ],
-  [
-    {
-      label: 'Team',
-      icon: 'i-lucide-users'
-    },
-    {
-      label: 'Invite users',
-      icon: 'i-lucide-user-plus',
-      children: [
-        [
-          {
-            label: 'Email',
-            icon: 'i-lucide-mail'
-          },
-          {
-            label: 'Message',
-            icon: 'i-lucide-message-square'
-          }
-        ],
-        [
-          {
-            label: 'More',
-            icon: 'i-lucide-circle-plus'
-          }
-        ]
+const items = computed<DropdownMenuItem[][]>(() => {
+  if (!loggedIn.value) {
+    return [
+      [
+        {
+          label: 'Iniciar sesión',
+          icon: 'lucide:log-in',
+          to: '/auth/login'
+        },
+        {
+          label: 'Registrarse',
+          icon: 'lucide:user-plus',
+          to: '/auth/signup'
+        }
       ]
-    },
-    {
-      label: 'New team',
-      icon: 'i-lucide-plus',
-      kbds: ['meta', 'n']
-    }
-  ],
-  [
-    {
-      label: 'GitHub',
-      icon: 'i-simple-icons-github',
-      to: 'https://github.com/nuxt/ui',
-      target: '_blank'
-    },
-    {
-      label: 'Support',
-      icon: 'i-lucide-life-buoy',
-      to: '/docs/components/dropdown-menu'
-    },
-    {
-      label: 'API',
-      icon: 'i-lucide-cloud',
-      disabled: true
-    }
-  ],
-  [
-    {
-      label: 'Logout',
-      icon: 'i-lucide-log-out',
-      kbds: ['shift', 'meta', 'q']
-    }
-  ]
-])
+    ]
+  }
 
-const clickLogout = () => {
-  logout()
-}
+  const userMenuItems: DropdownMenuItem[][] = [
+    [
+      {
+        label: user.value?.fullName || 'User',
+        avatar: {
+          src: user.value?.imageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.value?.fullName || 'User')}`
+        },
+        type: 'label'
+      }
+    ],
+    [
+      {
+        label: 'Perfil',
+        icon: 'lucide:user',
+        to: '/user/perfil'
+      }
+    ]
+  ]
+
+  if (isAdmin.value || isLegislator.value) {
+    const roleItems: DropdownMenuItem[] = []
+
+    if (isAdmin.value) {
+      roleItems.push({
+        label: 'Admin Dashboard',
+        icon: 'lucide:shield',
+        to: '/admin/dashboard'
+      })
+    }
+
+    if (isLegislator.value) {
+      roleItems.push({
+        label: 'Mis proyectos',
+        icon: 'lucide:folder',
+        to: '/cuenta/proyectos'
+      })
+      roleItems.push({
+        label: 'Nuevo proyecto',
+        icon: 'lucide:plus-circle',
+        to: '/proyectos/panel/nuevo'
+      })
+    }
+
+    userMenuItems.push(roleItems)
+  }
+
+  userMenuItems.push([
+    {
+      label: 'Cerrar sesión',
+      icon: 'lucide:log-out',
+      color: 'error',
+      onClick: () => logout()
+    }
+  ])
+
+  return userMenuItems
+})
 
 </script>
 
 <template>
      <AuthState>
       <template #default="{ loggedIn, clear }">
-          <div class="flex flex-col gap- justify-end" v-if="loggedIn">
+          <div class="flex flex-col gap-2 justify-end" v-if="loggedIn">
               <UDropdownMenu :items="items" :content="{ align: 'start', side: 'left', sideOffset: 8 }">
                   <UAvatar :src="user?.imageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.fullName || 'User')}`" :alt="user?.fullName || 'User'" size="3xl" class="cursor-pointer shadow" />
                   <UIcon name="lucide:caret-left" size="16" class="text-white" />
                 </UDropdownMenu>
-                <div class="text-right mt-4">
+                <div class="text-right">
                     <UColorModeButton variant="solid" color="neutral" />
                 </div>
             
         </div>
-        <div class="flex flex-col gap-5" v-else>
+        <div class="flex flex-col gap-4" v-else>
             <NuxtLink  to="/auth/login"><UIcon name="lucide:log-in" size="36" class="text-white" /></NuxtLink>
+            <div class="text-right">
+                <UColorModeButton variant="solid" color="neutral" />
+            </div>
         </div>
-
       </template>
       <template #placeholder>
         <UIcon name="lucide:loader-2" size="24" class="animate-spin text-gray-500 opacity-60" />

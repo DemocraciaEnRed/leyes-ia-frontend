@@ -42,14 +42,14 @@ const categorias = getCategorias()
         title: 'font-title',
         description: 'font-title text-sm md:text-lg text-left', 
         links: 'justify-start',
-        wrapper: 'md:mb-15',
+        wrapper: 'md:mb-15 z-10',
         headline: 'relative',
       }"
     >
       <template #root>
       </template>
       <template #top>
-        <div class="absolute w-full max-w-[--ui-container] left-1/2 transform -translate-x-1/2 inset-0 z-10 flex items-start justify-end p-6">
+        <div class="absolute w-full max-w-[--ui-container] left-1/2 transform -translate-x-1/2 inset-0 flex items-start justify-end p-6 ">
          <HomeVerticalIconHeader />
        </div>
         <div class="absolute inset-0 -z-10 pointer-events-none">
@@ -94,11 +94,11 @@ const categorias = getCategorias()
               ¿Que podes hacer?
             </h2>
             <p class="mb-0 md:mb-6">Participá en proyectos de ley, interactuá con el poder de la IA y conocé más sobre las iniciativas legislativas de tu país.</p>
-            <div class="hidden md:inline-flex gap-4 w-auto rounded-full bg-white dark:bg-violetita-200 dark:text-inverted hover:bg-primary-300 transition-colors items-center px-6 py-3 font-semibold cursor-pointer">
+            <ULink to="/proyectos" class="hidden md:inline-flex gap-4 w-auto rounded-full bg-white dark:bg-violetita-200 dark:hover:bg-violetita-400 dark:text-inverted dark:hover:text-inverted  hover:bg-primary-300 transition-colors items-center px-6 py-3 font-semibold cursor-pointer">
               <img src="/ideitas.png" class="max-h-[60px] w-auto" />
               <span class="text-xl font-title">Quiero aportar a proyectos</span>
               <Icon name="lucide:arrow-right-circle" size="24" />
-            </div>
+            </ULink>
           </div>
           <div class="md:ml-12 md:flex flex-col space-y-6 md:space-y-8">
             <div class="flex gap-8 items-center">
@@ -110,15 +110,15 @@ const categorias = getCategorias()
               <p><b>Dejá comentarios</b><br />sobre los proyectos para contribuir al debate.</p>
             </div>
             <div class="flex gap-8 items-center">
-              <img src="/papelito.png" class="max-w-[70px] md:max-w-[90px] w-auto" />
+              <img src="/papelito.png" class="max-w-[70px] md:max-w-[90px] w-auto" /> 
               <p><b>Hacé preguntas</b><br />sobre los proyectos para entenderlos mejor.</p>
             </div>
           </div>
-          <div class="flex md:hidden w-full justify-center gap-4 rounded-full bg-white hover:bg-verdecito-300 transition-colors items-center px-6 py-3 cursor-pointer">
+          <ULink to="/proyectos" class="flex md:hidden w-full justify-center gap-4 rounded-full bg-white hover:bg-verdecito-300 text-black transition-colors items-center px-6 py-3 cursor-pointer">
               <img src="/ideitas.png" class="max-h-[60px] w-auto" />
               <span class="font-semibold md:text-lg font-title" >Quiero aportar a proyectos</span>
               <Icon name="lucide:arrow-right-circle" size="24" />
-            </div>
+            </ULink>
           </div>
       </div>
       <div class="bg-azulcito-100 rounded-3xl p-12 my-8 light">
@@ -170,19 +170,22 @@ const categorias = getCategorias()
     </UContainer>
     <!-- <USeparator /> -->
 
-    <UContainer class="relative max-w-5/6 mx-auto py-10">
-      <h2 class="text-3xl sm:text-5xl font-bold mb-8">
+    <UContainer class="relative mx-auto py-15">
+      <h2 class="text-3xl sm:text-5xl font-bold mb-8 font-title">
         Explorá las categorias
       </h2>
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 mt-5">
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-2 mt-5">
         <UPageCard
           v-for="(categoria, index) in categorias"
           :key="`cat-${index}`"
           :spotlight="true"
           :to="`/proyectos?categoria=${index}`"
           class="flex items-center justify-center hover:text-primary"
+          :ui="{
+            container: 'p-1 sm:p-2'
+          }"
         >
-          <p class="text-lg text-center font-bold">
+          <p class="text-sm text-center font-title font-semibold">
             {{ categoria }}
           </p>
         </UPageCard>

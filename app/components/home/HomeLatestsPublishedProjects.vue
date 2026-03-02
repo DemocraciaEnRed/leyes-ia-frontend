@@ -43,7 +43,7 @@ const getAuthors = (project: PublishedProject) => {
 
 <template>
   <UPageSection class="">
-    <h2 class="text-3xl sm:text-5xl font-bold mb-8">
+    <h2 class="text-2xl sm:text-4xl font-title font-bold mb-4">
       Últimos proyectos publicados
     </h2>
 
@@ -89,6 +89,10 @@ const getAuthors = (project: PublishedProject) => {
           :to="`/proyectos/${project.slug}`"
           orientation="horizontal"
           variant="subtle"
+          :ui="{
+            title: 'font-title font-bold',
+            body: 'lg:pr-6'
+          }"
         />
       </UBlogPosts>
 

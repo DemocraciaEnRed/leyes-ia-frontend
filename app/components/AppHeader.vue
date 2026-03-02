@@ -1,8 +1,8 @@
 <script setup lang="ts">
 const { user, loggedIn, logout, isAdmin, isLegislator } = useAuth()
-const router = useRouter()
+import type { DropdownMenuItem, NavigationMenuItem } from '@nuxt/ui'
 
-const navigationLinks = [
+const navigationLinks = <NavigationMenuItem[]>[
   {
     label: 'Home',
     to: '/',
@@ -20,7 +20,7 @@ const navigationLinks = [
   }
 ]
 
-const items = computed(() => {
+const dropdownItems = computed<DropdownMenuItem[][]>(() => {
   if (!loggedIn.value) {
     return [
       [
@@ -38,7 +38,7 @@ const items = computed(() => {
     ]
   }
 
-  const userMenuItems = [
+  const userMenuItems: DropdownMenuItem[][] = [
     [
       {
         label: user.value?.fullName || 'User',
@@ -50,40 +50,16 @@ const items = computed(() => {
     ],
     [
       {
-        label: 'Mis proyectos',
-        icon: 'lucide:folder',
-        to: '/cuenta/proyectos'
-      },
-      {
-        label: 'Nuevo proyecto',
-        icon: 'lucide:plus-circle',
-        to: '/proyectos/panel/nuevo'
-      }
-    ],
-    [
-      {
         label: 'Perfil',
         icon: 'lucide:user',
         to: '/user/perfil'
       },
-      {
-        label: 'Configuración',
-        icon: 'lucide:settings',
-        disabled: true
-      }
     ],
-    [
-      {
-        label: 'Cerrar sesión',
-        icon: 'lucide:log-out',
-        onClick: () => logout()
-      }
-    ]
   ]
 
   // Add role-specific menu items
   if (isAdmin.value || isLegislator.value) {
-    const roleItems: any[] = []
+    const roleItems: DropdownMenuItem[] = []
 
     if (isAdmin.value) {
       roleItems.push({
@@ -95,14 +71,27 @@ const items = computed(() => {
 
     if (isLegislator.value) {
       roleItems.push({
-        label: 'Propuestas Legislativas',
-        icon: 'lucide:briefcase',
-        to: '/legislator/proposals'
+        label: 'Mis proyectos',
+        icon: 'lucide:folder',
+        to: '/cuenta/proyectos'
+      })
+      roleItems.push({
+        label: 'Nuevo proyecto',
+        icon: 'lucide:plus-circle',
+        to: '/proyectos/panel/nuevo'
       })
     }
 
     userMenuItems.push(roleItems)
   }
+
+  const closeSessionItem: DropdownMenuItem = {
+    label: 'Cerrar sesión',
+    icon: 'lucide:log-out',
+    color: 'error',
+    onClick: () => logout()
+  }
+   userMenuItems.push([closeSessionItem])
 
   return userMenuItems
 })
@@ -123,7 +112,7 @@ const items = computed(() => {
       <UColorModeButton />
 
       <UDropdownMenu
-        :items="items"
+        :items="dropdownItems"
         class="hidden lg:flex"
         :content="{ align: 'end', side: 'bottom', sideOffset: 8 }"
         :arrow="true"
@@ -140,7 +129,7 @@ const items = computed(() => {
     </template>
     <template #body>
       <UNavigationMenu
-        :items="items"
+        :items="navigationLinks"
         orientation="vertical"
         class="-mx-2.5"
       />
