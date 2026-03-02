@@ -93,27 +93,33 @@ const toggleCategory = async (categoryIndex) => {
   <NuxtLayout name="default">
     <UPageHero
       title="Proyectos"
-      description="Estos son algunos de los proyectos que existen sobre esas temáticas"
+      :ui="{
+        title: 'font-title font-bold',
+        container: 'gap-8 sm:gap-y-10 py-12 sm:py-14 lg:pt-18 lg:pb-5'
+      }"
     >
-      <div>
-        <p>Seleccione una categoría:</p>
+    <div class="flex flex-col items-center gap-3 justify-center">
+      <p class="font-semibold">Seleccione una categoría</p>
+      <div class="flex justify-center flex-wrap items-center">
         <UButton
-          v-for="(categoria, index) in categorias"
-          :key="index"
-          class="m-1"
-          :variant="getVariant(index)"
-          @click="toggleCategory(index)"
+        v-for="(categoria, index) in categorias"
+        :key="index"
+        class="m-1 rounded-full text-xs sm:text-sm"
+        :variant="getVariant(index)"
+        color="verdecito"
+        @click="toggleCategory(index)"
         >
-          {{ categoria }}
-        </UButton>
-      </div>
+        {{ categoria }}
+      </UButton>
+    </div>
+  </div>
     </UPageHero>
     <USeparator
       icon="i-lucide-book"
       class="my-8"
     />
 
-    <UContainer>
+    <UContainer class="py-10">
       <UProgress
         v-if="pending"
         indeterminate
@@ -159,6 +165,10 @@ const toggleCategory = async (categoryIndex) => {
           :authors="getAuthors(project)"
           :image="PLACEHOLDER_COVER_URL"
           :to="`/proyectos/${project.slug}`"
+          :ui="{
+            title: 'font-title font-bold',
+            description: 'text-sm'
+          }"
           variant="subtle"
         />
       </UBlogPosts>

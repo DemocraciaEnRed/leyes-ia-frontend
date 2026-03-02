@@ -1,6 +1,5 @@
 <script setup>
 import { CalendarDate, Time } from '@internationalized/date'
-import { getQuestionTypeLabel } from '~/utils/getQuestionTypeLabel'
 
 definePageMeta({
   middleware: 'auth'
@@ -10,12 +9,7 @@ const toast = useToast()
 const route = useRoute()
 const projectId = route.params.projectId
 
-const runtimeConfig = useRuntimeConfig()
-
-const { data: dataResponse, pending, error, refresh } = await useFetch(`/api/backend/projects/${projectId}/manage`)
-
 // State for AI content generation
-const requiredQuestions = ref(['¿Si tuviera que decirle algo a la persona legisladora, qué querría comunicarle?'])
 const generatingContent = ref(false)
 const savingSurvey = ref(false)
 const alreadyContentGenerated = ref(false)
@@ -44,16 +38,7 @@ const survey = reactive({
   questions: [],
   surveyJsonSchema: {}
 })
-const userPromptForEdits = ref('')
-
-// functions to manage required questions
-const addRequiredQuestion = () => {
-  requiredQuestions.value.push('')
-}
-
-const removeRequiredQuestion = (index) => {
-  requiredQuestions.value.splice(index, 1)
-}
+const editingQuestionIndex = ref(null)
 
 const generateContentWithAI = async () => {
   generatingContent.value = true
@@ -158,25 +143,58 @@ const saveSurvey = async () => {
 
 // Functions to manage generated questions
 const deleteQuestion = (index) => {
-  if (survey.value && survey.value.questions) {
-    survey.value.questions.splice(index, 1)
+  if (survey.questions) {
+    survey.questions.splice(index, 1)
+    if (editingQuestionIndex.value === index) {
+      editingQuestionIndex.value = null
+    }
   }
 }
 
 const moveQuestionUp = (index) => {
-  if (index > 0 && survey.value && survey.value.questions) {
-    const questions = survey.value.questions;
-    [questions[index - 1], questions[index]] = [questions[index], questions[index - 1]]
+  if (index > 0 && survey.questions) {
+    const questions = survey.questions
+    ;[questions[index - 1], questions[index]] = [questions[index], questions[index - 1]]
   }
 }
 
 const moveQuestionDown = (index) => {
-  if (survey.value && survey.value.questions) {
-    const questions = survey.value.questions
+  if (survey.questions) {
+    const questions = survey.questions
     if (index < questions.length - 1) {
       [questions[index], questions[index + 1]] = [questions[index + 1], questions[index]]
     }
   }
+}
+
+const addQuestion = () => {
+  const newQuestion = {
+    questionText: '',
+    type: 'single-choice',
+    required: false,
+    openTextEnabled: true,
+    options: ['Sí', 'No', 'No sé']
+  }
+
+  survey.questions.push(newQuestion)
+  editingQuestionIndex.value = survey.questions.length - 1
+}
+
+const editQuestion = (index) => {
+  editingQuestionIndex.value = index
+}
+
+const cancelQuestionEdit = () => {
+  editingQuestionIndex.value = null
+}
+
+const saveQuestionEdit = (index, payload) => {
+  survey.questions[index] = {
+    ...survey.questions[index],
+    ...payload
+  }
+
+  editingQuestionIndex.value = null
 }
 </script>
 
@@ -325,134 +343,21 @@ const moveQuestionDown = (index) => {
           </UPageCard>
         </div>
       </UPageCard>
-      <UPageCard
+      <SurveyQuestionsListCard
         v-if="alreadyContentGenerated"
-        variant="outline"
         title="3. Preguntas generadas"
         description="A continuación se muestran las preguntas generadas por la IA. Puede editarlas, eliminarlas o reordenarlas antes de guardar la encuesta."
-      >
-        <UEmpty
-          v-if="!alreadyContentGenerated"
-          variant="naked"
-          icon="lucide:circle-slash"
-          title="No hay preguntas"
-          class="mx-auto"
-          description="No se han generado preguntas aún. Utilice el botón de arriba para generar preguntas automáticamente con IA."
-        />
-        <UPageCard
-          v-for="(question, index) in survey.questions"
-          :key="index"
-          variant="outline"
-          class="bg-elevated"
-        >
-          <div class="flex justify-between items-start gap-4">
-            <div class="flex-1 space-y-3">
-              <div class="flex items-start gap-3">
-                <UBadge
-                  color="primary"
-                  variant="subtle"
-                >
-                  {{ index + 1 }}
-                </UBadge>
-                <div class="flex-1">
-                  <h3 class="text-lg font-semibold">
-                    {{ question.questionText }}
-                  </h3>
-                </div>
-              </div>
-              <div
-                v-if="question.helpText"
-                class="text-sm text-gray-600 dark:text-gray-400"
-              >
-                <span class="font-medium" /> {{ question.helpText }}
-              </div>
-
-              <div class="flex gap-2 flex-wrap">
-                <UBadge
-                  color="neutral"
-                  variant="subtle"
-                >
-                  {{ getQuestionTypeLabel(question.type) }}
-                </UBadge>
-                <UBadge
-                  v-if="question.scale"
-                  color="neutral"
-                  variant="subtle"
-                >
-                  Escala: 1-{{ question.scale }}
-                </UBadge>
-                <UBadge
-                  v-if="question.maxLength"
-                  color="neutral"
-                  variant="subtle"
-                >
-                  Máx: {{ question.maxLength }} caracteres
-                </UBadge>
-                <UBadge
-                  v-if="question.required"
-                  color="error"
-                  variant="subtle"
-                >
-                  Obligatoria
-                </UBadge>
-                <UBadge
-                  v-else
-                  color="neutral"
-                  variant="subtle"
-                >
-                  Opcional
-                </UBadge>
-              </div>
-
-              <div
-                v-if="question.options && question.options.length > 0"
-                class="space-y-1"
-              >
-                <p class="text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Opciones:
-                </p>
-                <ul class="list-disc list-inside space-y-1 text-sm text-gray-600 dark:text-gray-400">
-                  <li
-                    v-for="(option, optIndex) in question.options"
-                    :key="optIndex"
-                  >
-                    {{ option }}
-                  </li>
-                </ul>
-              </div>
-            </div>
-
-            <div class="flex flex-col gap-2">
-              <UButton
-                icon="lucide:arrow-up"
-                class="cursor-pointer"
-                color="neutral"
-                variant="outline"
-                size="sm"
-                :disabled="index === 0"
-                @click="moveQuestionUp(index)"
-              />
-              <UButton
-                icon="lucide:arrow-down"
-                class="cursor-pointer"
-                color="neutral"
-                variant="outline"
-                size="sm"
-                :disabled="index === survey.questions.length - 1"
-                @click="moveQuestionDown(index)"
-              />
-              <UButton
-                icon="lucide:trash-2"
-                class="cursor-pointer"
-                color="warning"
-                variant="outline"
-                size="sm"
-                @click="deleteQuestion(index)"
-              />
-            </div>
-          </div>
-        </UPageCard>
-      </UPageCard>
+        :questions="survey.questions"
+        :editing-index="editingQuestionIndex"
+        empty-description="No se han generado preguntas aún. Utilice el botón de arriba para generar preguntas automáticamente con IA."
+        @add="addQuestion"
+        @edit="editQuestion"
+        @save="saveQuestionEdit"
+        @cancel="cancelQuestionEdit"
+        @move-up="moveQuestionUp"
+        @move-down="moveQuestionDown"
+        @delete="deleteQuestion"
+      />
       <!-- <UPageCard variant="outline" class=" sticky bottom-10 mt-5 z-10" v-if="alreadyContentGenerated">
                 <UChatPrompt v-model="userPromptForEdits" @submit="regenerateContentWithAI" :loading="generatingContent" placeholder="De instrucciones de edición para la IA..." :disabled="generatingContent || savingProject">
                     <UChatPromptSubmit :loading="generatingContent" icon="lucide:arrow-right"  />
