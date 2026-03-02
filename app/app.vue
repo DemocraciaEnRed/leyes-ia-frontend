@@ -11,7 +11,7 @@ useHead({
   }
 })
 
-const title = 'demo+IA'
+const title = 'demoIA'
 const description = 'Plataforma para participar colectivamente en proyectos de ley de legisladores argentinos, donde la IA ayuda a la ciudadania a explicar y entender, sin reemplazarla.'
 
 useSeoMeta({

@@ -1,17 +1,14 @@
-import type { AuthSession } from '../../types/auth'
-
 export default defineEventHandler(async (event) => {
   // Get session from nuxt-auth-utils
   const session = await getUserSession(event)
+  const token = session?.secure?.token
+  const user = session?.user
 
-  if (!session || !(session as any).token || !(session as any).user) {
+  if (!session || !token || !user) {
     return {
       user: null
     }
   }
-
-  // Cast to our AuthSession type
-  const authSession = session as unknown as AuthSession
 
   // TODO: Optionally check token expiration and refresh
   // Uncomment below for token refresh implementation:
@@ -69,6 +66,6 @@ export default defineEventHandler(async (event) => {
   */
 
   return {
-    user: authSession.user
+    user
   }
 })
