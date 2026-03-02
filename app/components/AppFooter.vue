@@ -42,13 +42,13 @@
         <div class="flex flex-col items-center gap-1 text-sm">
           <!-- Acerca de -->
           <p>
-            <NuxtLink to="/about" class="underline hover:text-primary">
+            <NuxtLink to="/acerca-de" class="underline hover:text-primary">
               Acerca de
             </NuxtLink>
           </p>
           <!-- Politica de privacidad -->
           <p>
-            <NuxtLink to="/privacy-policy" class="underline hover:text-primary">
+            <NuxtLink to="/politica-de-privacidad" class="underline hover:text-primary">
               Política de Privacidad
             </NuxtLink>
           </p>
