@@ -1,6 +1,9 @@
 <template>
-  <UMain>
-    <slot />
-  </UMain>
-  <AppFooter />
+  <div>
+    <ProfileCompletionBanner />
+    <UMain>
+      <slot />
+    </UMain>
+    <AppFooter />
+  </div>
 </template>

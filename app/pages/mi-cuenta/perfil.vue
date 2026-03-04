@@ -4,7 +4,7 @@ definePageMeta({
 })
 
 const toast = useToast()
-const { user } = useAuth()
+const { user, refreshSession } = useAuth()
 
 const GENRE_OPTIONS = [
   { label: 'Masculino', value: 'masculino' },
@@ -17,7 +17,7 @@ const GENRE_OPTIONS = [
 const { data: provincesResponse } = await useFetch<{ provinces: Array<{ id: number, code: string, name: string }> }>('/api/backend/utils/provinces')
 
 const PROVINCE_OPTIONS = computed(() => {
-  return (provincesResponse.value?.provinces || []).map((province) => ({
+  return (provincesResponse.value?.provinces || []).map(province => ({
     label: province.name,
     value: province.id
   }))
@@ -102,14 +102,16 @@ const saveProfile = async () => {
     })
 
     await refreshProfile()
+    await refreshSession()
 
     toast.add({
       title: 'Perfil actualizado',
       description: 'Los datos guardados quedaron bloqueados para futuras ediciones.',
       color: 'success'
     })
-  } catch (error: any) {
-    const serverMessage = error?.data?.message || error?.message || 'No se pudo actualizar tu perfil.'
+  } catch (error: unknown) {
+    const normalizedError = error as { data?: { message?: string }, message?: string }
+    const serverMessage = normalizedError?.data?.message || normalizedError?.message || 'No se pudo actualizar tu perfil.'
     toast.add({
       title: 'Error al guardar',
       description: serverMessage,

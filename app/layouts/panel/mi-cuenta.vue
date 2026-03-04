@@ -38,50 +38,53 @@ const items = computed<NavigationMenuItem[]>(() => [
 </script>
 
 <template>
-  <AppHeader />
-  <UMain>
-    <div class="lg:hidden border-b border-default">
-      <UCollapsible
-        class="flex flex-col"
-        :unmount-on-hide="true"
-      >
-        <UButton
-          class="group cursor-pointer py-2 rounded-none"
-          label="Menú"
-          icon="lucide:menu"
-          color="neutral"
-          variant="soft"
-          trailing-icon="i-lucide-chevron-down"
-          :ui="{ trailingIcon: 'group-data-[state=open]:rotate-180 transition-transform duration-200' }"
-          block
-        />
-
-        <template #content>
-          <UNavigationMenu
-            :items="items"
-            orientation="vertical"
+  <div>
+    <AppHeader />
+    <ProfileCompletionBanner />
+    <UMain>
+      <div class="lg:hidden border-b border-default">
+        <UCollapsible
+          class="flex flex-col"
+          :unmount-on-hide="true"
+        >
+          <UButton
+            class="group cursor-pointer py-2 rounded-none"
+            label="Menú"
+            icon="lucide:menu"
             color="neutral"
-            :highlight="true"
-            class="py-2 px-4 border-t border-default"
+            variant="soft"
+            trailing-icon="i-lucide-chevron-down"
+            :ui="{ trailingIcon: 'group-data-[state=open]:rotate-180 transition-transform duration-200' }"
+            block
           />
-        </template>
-      </UCollapsible>
-    </div>
-    <UContainer>
-      <UPage>
-        <template #left>
-          <UPageAside>
+
+          <template #content>
             <UNavigationMenu
               :items="items"
               orientation="vertical"
               color="neutral"
               :highlight="true"
+              class="py-2 px-4 border-t border-default"
             />
-          </UPageAside>
-        </template>
-        <slot />
-      </UPage>
-    </UContainer>
-  </UMain>
-  <AppFooter />
+          </template>
+        </UCollapsible>
+      </div>
+      <UContainer>
+        <UPage>
+          <template #left>
+            <UPageAside>
+              <UNavigationMenu
+                :items="items"
+                orientation="vertical"
+                color="neutral"
+                :highlight="true"
+              />
+            </UPageAside>
+          </template>
+          <slot />
+        </UPage>
+      </UContainer>
+    </UMain>
+    <AppFooter />
+  </div>
 </template>
