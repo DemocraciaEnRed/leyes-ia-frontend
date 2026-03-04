@@ -1,36 +1,43 @@
 <script setup lang="ts">
-import { collapsible } from '#build/ui'
 import type { NavigationMenuItem } from '@nuxt/ui'
 
 const route = useRoute()
-const projectId = route.params.projectId
+const { isLegislator } = useAuth()
 
-const items = ref<NavigationMenuItem[]>([
-  [{
-    label: 'Volver al home',
-    icon: 'lucide:home',
-    to: '/'
-  }], [
+const items = computed<NavigationMenuItem[]>(() => {
+  const children: NavigationMenuItem[] = [
     {
       label: 'Mis proyectos',
-      icon: 'lucide:folder',
-      defaultOpen: true,
-      color: 'neutral',
-      active: route.path.startsWith('/cuenta/proyectos') || route.path.startsWith('/proyectos/panel'),
-      children: [
-        {
-          label: 'Nuevo proyecto',
-          icon: 'lucide:plus-circle',
-          to: `/proyectos/panel/nuevo`
-        },
-        {
-          label: 'Mis proyectos',
-          icon: 'lucide:folders',
-          to: `/cuenta/proyectos`
-        }
-      ]
-    }]
-])
+      icon: 'lucide:folders',
+      to: '/cuenta/proyectos'
+    }
+  ]
+
+  if (isLegislator.value) {
+    children.unshift({
+      label: 'Nuevo proyecto',
+      icon: 'lucide:plus-circle',
+      to: '/proyectos/panel/nuevo'
+    })
+  }
+
+  return [
+    [{
+      label: 'Volver al home',
+      icon: 'lucide:home',
+      to: '/'
+    }], [
+      {
+        label: 'Mis proyectos',
+        icon: 'lucide:folder',
+        defaultOpen: true,
+        color: 'neutral',
+        active: route.path.startsWith('/cuenta/proyectos') || route.path.startsWith('/proyectos/panel'),
+        children
+      }
+    ]
+  ]
+})
 </script>
 
 <template>

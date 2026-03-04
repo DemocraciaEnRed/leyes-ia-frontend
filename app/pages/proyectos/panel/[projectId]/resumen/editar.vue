@@ -16,6 +16,10 @@ const projectId = route.params.projectId
 
 const { data: dataResponse, pending, error, refresh } = await useFetch(`/api/backend/projects/${projectId}/manage`)
 
+if (dataResponse.value?.project?.status === 'published') {
+  await navigateTo(`/proyectos/panel/${projectId}/resumen`)
+}
+
 // State to manage saving process
 const savingProject = ref(false)
 const generatingContent = ref(false)

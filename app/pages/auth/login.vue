@@ -10,8 +10,7 @@ definePageMeta({
   middleware: 'guest'
 })
 
-const { login } = useAuth()
-const router = useRouter()
+const { login, isLegislator } = useAuth()
 
 const toast = useToast()
 
@@ -49,7 +48,7 @@ const handleLogin = async (event: FormSubmitEvent<Schema>) => {
       color: 'success'
     })
 
-    await navigateTo('/cuenta/proyectos')
+    await navigateTo(isLegislator.value ? '/cuenta/proyectos' : '/proyectos')
   } catch (error: any) {
     toast.add({
       title: 'Error de inicio de sesión',

@@ -2,7 +2,7 @@
 import slugify from 'slugify'
 
 definePageMeta({
-  middleware: 'auth'
+  middleware: 'legislator'
 })
 const { reactive, watch, ref, computed } = await import('vue')
 const runtimeConfig = useRuntimeConfig()

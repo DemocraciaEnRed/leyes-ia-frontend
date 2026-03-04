@@ -9,8 +9,7 @@ definePageMeta({
   middleware: 'guest'
 })
 
-const { signup } = useAuth()
-const router = useRouter()
+const { signup, isLegislator } = useAuth()
 const toast = useToast()
 
 const schema = z.object({
@@ -86,8 +85,7 @@ const handleSignup = async (event: FormSubmitEvent<Schema>) => {
       color: 'success'
     })
 
-    // Redirigir a Mis proyectos después de registro exitoso
-    await router.push('/cuenta/proyectos')
+    await navigateTo(isLegislator.value ? '/cuenta/proyectos' : '/proyectos')
   } catch (err: any) {
     error.value = err.data?.message || 'Error al crear la cuenta'
     toast.add({

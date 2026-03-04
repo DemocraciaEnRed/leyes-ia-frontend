@@ -1,36 +1,74 @@
 <script setup>
-const { ref } = await import('vue')
-const { session } = useAuth()
+const { user, isLegislator } = useAuth()
 
 definePageMeta({
   middleware: 'auth'
 })
 
-const { data: hubsData, pending, status, error, refresh } = await useAuthFetch('/api/backend/projects', {
+const { data: hubsData, status, error, refresh } = await useAuthFetch('/api/backend/projects', {
   query: {
     scope: 'managed'
   }
 })
 
-const links = ref([
-  {
-    label: 'Nuevo proyecto',
-    icon: 'lucide:plus-circle',
-    to: `/proyectos/panel/nuevo`
-  },
-  {
-    label: 'Refrescar',
-    icon: 'lucide:refresh-cw',
-    onClick: () => refresh()
+const links = computed(() => {
+  if (isLegislator.value) {
+    return [
+      {
+        label: 'Nuevo proyecto',
+        icon: 'lucide:plus-circle',
+        to: '/proyectos/panel/nuevo'
+      },
+      {
+        label: 'Refrescar',
+        icon: 'lucide:refresh-cw',
+        onClick: () => refresh()
+      }
+    ]
   }
-])
 
-const getUserData = async () => {
-  const userDataResponse = await $authFetch(`/api/backend/test/whoami`, {
-    method: 'GET'
-  })
-  console.log('Fetched user data:', userDataResponse)
-}
+  return [
+    {
+      label: 'Refrescar',
+      icon: 'lucide:refresh-cw',
+      onClick: () => refresh()
+    }
+  ]
+})
+
+const emptyActions = computed(() => {
+  if (isLegislator.value) {
+    return [
+      {
+        icon: 'lucide:plus-circle',
+        label: 'Nuevo proyecto',
+        color: 'neutral',
+        variant: 'solid',
+        class: 'cursor-pointer',
+        to: '/proyectos/panel/nuevo'
+      },
+      {
+        icon: 'lucide:refresh-cw',
+        label: 'Refrescar',
+        color: 'neutral',
+        variant: 'outline',
+        class: 'cursor-pointer',
+        onClick: () => refresh()
+      }
+    ]
+  }
+
+  return [
+    {
+      icon: 'lucide:refresh-cw',
+      label: 'Refrescar',
+      color: 'neutral',
+      variant: 'outline',
+      class: 'cursor-pointer',
+      onClick: () => refresh()
+    }
+  ]
+})
 
 // const tableData = computed(() => {
 //     console.log('hubsData:', hubsData.value);
@@ -51,6 +89,15 @@ const getUserData = async () => {
       :links="links"
     />
     <UPageBody>
+      <UAlert
+        v-if="user?.role === 'user'"
+        title="Acceso como integrante"
+        description="Podés participar en proyectos y equipos donde te hayan agregado. La creación de nuevos proyectos está habilitada solo para legisladores."
+        color="info"
+        variant="subtle"
+        icon="lucide:info"
+        class="mb-4"
+      />
       <UProgress
         v-if="status == 'pending'"
         animation="swing"
@@ -69,25 +116,8 @@ const getUserData = async () => {
         icon="lucide:inbox"
         title="Sin proyectos"
         class="mx-auto"
-        description="Aun no tenés proyectos. Subí un nuevo proyecto para comenzar a crear espacios de participacion"
-        :actions="[
-          {
-            icon: 'lucide:plus-circle',
-            label: 'Nuevo proyecto',
-            color: 'neutral',
-            variant: 'solid',
-            class: 'cursor-pointer',
-            to: `/proyectos/panel/nuevo`
-          },
-          {
-            icon: 'lucide:refresh-cw',
-            label: 'Refrescar',
-            color: 'neutral',
-            variant: 'outline',
-            class: 'cursor-pointer',
-            onClick: () => refresh()
-          }
-        ]"
+        :description="isLegislator ? 'Aún no tenés proyectos. Creá uno nuevo para empezar.' : 'Aún no tenés proyectos asignados. Cuando te sumen a un equipo, aparecerán acá.'"
+        :actions="emptyActions"
       />
       <div
         v-if="status == 'success'"

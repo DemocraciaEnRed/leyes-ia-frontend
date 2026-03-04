@@ -1,8 +1,6 @@
 <script setup>
 import { computed } from 'vue'
 
-const runtimeConfig = useRuntimeConfig()
-
 definePageMeta({
   layout: 'workspace',
   middleware: 'auth'
@@ -12,18 +10,25 @@ const projectId = route.params.projectId
 
 const { data: dataResponse, status, error, refresh } = await useFetch(`/api/backend/projects/${projectId}/manage`)
 
-const links = ref([
-  {
-    label: 'Refrescar',
-    icon: 'lucide:refresh-cw',
-    onClick: () => refresh()
-  },
-  {
-    label: 'Editar',
-    icon: 'lucide:edit-3',
-    to: `/proyectos/panel/${projectId}/resumen/editar`
+const links = computed(() => {
+  const baseLinks = [
+    {
+      label: 'Refrescar',
+      icon: 'lucide:refresh-cw',
+      onClick: () => refresh()
+    }
+  ]
+
+  if (dataResponse.value?.project?.status !== 'published') {
+    baseLinks.push({
+      label: 'Editar',
+      icon: 'lucide:edit-3',
+      to: `/proyectos/panel/${projectId}/resumen/editar`
+    })
   }
-])
+
+  return baseLinks
+})
 </script>
 
 <template>
@@ -56,7 +61,7 @@ const links = ref([
       />
     </UPageBody>
 
-    <UPageBody v-if="status == 'success' && dataResponse.project.status == 'ready'">
+    <UPageBody v-if="status == 'success' && ['ready', 'published'].includes(dataResponse.project.status)">
       <h1 class="text-2xl font-bold mb-4">
         Resumen del Proyecto
       </h1>

@@ -23,12 +23,6 @@ const items = computed<NavigationMenuItem[]>(() => [
           icon: 'lucide:user-round',
           to: '/mi-cuenta/perfil',
           active: route.path === '/mi-cuenta/perfil'
-        },
-        {
-          label: 'Equipo',
-          icon: 'lucide:users',
-          to: '/mi-cuenta/equipo',
-          active: route.path === '/mi-cuenta/equipo'
         }
       ]
     }

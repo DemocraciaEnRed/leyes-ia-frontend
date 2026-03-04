@@ -128,6 +128,24 @@ const saveProfile = async () => {
       :description="`Gestiona tu información personal, ${user?.firstName}`"
     />
     <UPageBody>
+      <UAlert
+        v-if="user?.role === 'user'"
+        title="Acceso de integrante"
+        description="Podés participar en proyectos y equipos donde te hayan agregado. La creación de nuevos proyectos está habilitada únicamente para legisladores."
+        color="info"
+        variant="subtle"
+        icon="lucide:info"
+        class="mb-4"
+      />
+      <UAlert
+        v-else-if="user?.role === 'legislator'"
+        title="Acceso de legislador"
+        description="Podés crear nuevos proyectos y gestionar los equipos asociados a tus iniciativas."
+        color="success"
+        variant="subtle"
+        icon="lucide:shield-check"
+        class="mb-4"
+      />
       <UCard>
         <div
           v-if="user"

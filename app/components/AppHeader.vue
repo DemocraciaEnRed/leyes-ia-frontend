@@ -1,8 +1,8 @@
 <script setup lang="ts">
-const { user, loggedIn, logout, isAdmin, isLegislator } = useAuth()
 import type { DropdownMenuItem, NavigationMenuItem } from '@nuxt/ui'
+const { user, loggedIn, logout, isAdmin, isLegislator } = useAuth()
 
-const navigationLinks = <NavigationMenuItem[]>[
+const navigationLinks: NavigationMenuItem[] = [
   {
     label: 'Home',
     to: '/',
@@ -57,32 +57,29 @@ const dropdownItems = computed<DropdownMenuItem[][]>(() => {
     ],
   ]
 
-  // Add role-specific menu items
-  if (isAdmin.value || isLegislator.value) {
-    const roleItems: DropdownMenuItem[] = []
-
-    if (isAdmin.value) {
-      roleItems.push({
+  if (isAdmin.value) {
+    userMenuItems.push([
+      {
         label: 'Admin Dashboard',
         icon: 'lucide:shield',
         to: '/admin/dashboard'
-      })
-    }
+      }
+    ])
+  }
 
-    if (isLegislator.value) {
-      roleItems.push({
+  if (isLegislator.value) {
+    userMenuItems.push([
+      {
         label: 'Mis proyectos',
         icon: 'lucide:folder',
         to: '/cuenta/proyectos'
-      })
-      roleItems.push({
+      },
+      {
         label: 'Nuevo proyecto',
         icon: 'lucide:plus-circle',
         to: '/proyectos/panel/nuevo'
-      })
-    }
-
-    userMenuItems.push(roleItems)
+      }
+    ])
   }
 
   const closeSessionItem: DropdownMenuItem = {
