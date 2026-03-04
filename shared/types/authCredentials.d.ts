@@ -16,7 +16,6 @@ export interface SignupCredentials {
   password: string
   firstName: string
   lastName: string
-  magicWord: string
   dateOfBirth?: string
   genre?: 'masculino' | 'femenino' | 'no_binario' | 'otro' | 'prefiero_no_decir'
   documentNumber?: string

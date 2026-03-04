@@ -13,7 +13,6 @@ export default defineEventHandler(async (event) => {
         password: body.password,
         firstName: body.firstName,
         lastName: body.lastName,
-        magicWord: body.magicWord,
         dateOfBirth: body.dateOfBirth,
         genre: body.genre,
         documentNumber: body.documentNumber,
