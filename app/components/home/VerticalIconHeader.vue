@@ -34,7 +34,7 @@ const items = computed<DropdownMenuItem[][]>(() => {
       {
         label: 'Perfil',
         icon: 'lucide:user',
-        to: '/user/perfil'
+        to: '/mi-cuenta/perfil'
       }
     ]
   ]

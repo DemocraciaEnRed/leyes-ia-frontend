@@ -7,15 +7,15 @@ const { user } = useAuth()
 </script>
 
 <template>
-  <UPage>
+  <NuxtLayout name="panel-mi-cuenta">
+    <UPageHeader
+      title="Mi Equipo"
+      :description="`Gestiona y colabora con los miembros de tu equipo, ${user?.firstName || ''}`"
+    />
     <UPageBody>
-      <UPageHeader
-        title="Mi Equipo"
-        description="Gestiona y colabora con los miembros de tu equipo."
-      />
-      <UCard class="mt-4">
+      <UCard>
         <p>Funcionalidad de equipo próximamente...</p>
       </UCard>
     </UPageBody>
-  </UPage>
+  </NuxtLayout>
 </template>

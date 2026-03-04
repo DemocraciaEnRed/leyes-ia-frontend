@@ -104,13 +104,13 @@ const saveProfile = async () => {
 </script>
 
 <template>
-  <UPage>
+  <NuxtLayout name="panel-mi-cuenta">
+    <UPageHeader
+      title="Mi Perfil"
+      :description="`Gestiona tu información personal, ${user?.firstName}`"
+    />
     <UPageBody>
-      <UPageHeader
-        title="Mi Perfil"
-        :description="`Gestiona tu información personal, ${user?.firstName}`"
-      />
-      <UCard class="mt-4">
+      <UCard>
         <div
           v-if="user"
           class="space-y-4"
@@ -215,5 +215,5 @@ const saveProfile = async () => {
         </div>
       </UCard>
     </UPageBody>
-  </UPage>
+  </NuxtLayout>
 </template>

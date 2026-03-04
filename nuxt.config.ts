@@ -58,6 +58,32 @@ export default defineNuxtConfig({
   // },
 
   compatibilityDate: '2025-01-15',
+  hooks: {
+    'pages:extend'(pages) {
+      const newPrefix = '/mi-cuenta'
+      const legacyPrefix = '/user'
+
+      const visit = (items: any[]) => {
+        for (const page of items) {
+          if (typeof page.path === 'string' && page.path.startsWith(newPrefix)) {
+            const suffix = page.path.slice(newPrefix.length)
+            const aliases = Array.isArray(page.alias)
+              ? page.alias
+              : (page.alias ? [page.alias] : [])
+
+            aliases.push(`${legacyPrefix}${suffix}`)
+            page.alias = Array.from(new Set(aliases))
+          }
+
+          if (Array.isArray(page.children) && page.children.length > 0) {
+            visit(page.children)
+          }
+        }
+      }
+
+      visit(pages as any[])
+    }
+  },
   // hooks: {
   //   'pages:extend'(pages) {
   //     const panelPrefix = '/proyectos/panel'
