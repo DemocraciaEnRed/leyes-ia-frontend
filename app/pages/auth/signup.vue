@@ -21,8 +21,7 @@ const schema = z.object({
   genre: z.enum(['masculino', 'femenino', 'no_binario', 'otro', 'prefiero_no_decir']).optional(),
   documentNumber: z.string().refine((value) => value === undefined || value === '' || /^\d+$/.test(value), 'Debe contener solo números').optional(),
   provinceId: z.number().int().min(1).optional(),
-  confirmPassword: z.string('Por favor confirma tu contraseña').min(8, 'Debe tener al menos 8 caracteres'),
-  magicWord: z.string('La palabra mágica es obligatoria').min(1, 'La palabra mágica es obligatoria')
+  confirmPassword: z.string('Por favor confirma tu contraseña').min(8, 'Debe tener al menos 8 caracteres')
 }).refine(data => data.password === data.confirmPassword, {
   message: 'Las contraseñas no coinciden',
   path: ['confirmPassword'] // path of error
@@ -56,8 +55,7 @@ const formState = reactive<Partial<Schema>>({
   genre: undefined,
   documentNumber: '',
   provinceId: undefined,
-  confirmPassword: '',
-  magicWord: ''
+  confirmPassword: ''
 })
 
 const handleSignup = async (event: FormSubmitEvent<Schema>) => {
@@ -70,7 +68,6 @@ const handleSignup = async (event: FormSubmitEvent<Schema>) => {
       lastName: event.data.lastName,
       email: event.data.email,
       password: event.data.password,
-      magicWord: event.data.magicWord,
       dateOfBirth: event.data.dateOfBirth,
       genre: event.data.genre,
       documentNumber: event.data.documentNumber || undefined,
@@ -259,19 +256,6 @@ const handleSignup = async (event: FormSubmitEvent<Schema>) => {
               />
             </UFormField>
           </div>
-          <UFormField
-            label="¿Cual es la palabra mágica?"
-            name="magicWord"
-            required
-          >
-            <UInput
-              v-model="formState.magicWord"
-              type="text"
-              placeholder="La palabra mágica es..."
-              required
-              class="w-full"
-            />
-          </UFormField>
           <UButton
             type="submit"
             block

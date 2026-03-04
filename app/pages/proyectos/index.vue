@@ -264,7 +264,8 @@ const clearCategoryFromDrawer = async () => {
           :to="`/proyectos/${project.slug}`"
           :ui="{
             title: 'font-title font-bold',
-            description: 'text-sm'
+            description: 'text-sm',
+            meta: 'flex-col-reverse items-start'
           }"
           variant="subtle"
         />
