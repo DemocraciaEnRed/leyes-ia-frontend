@@ -17,6 +17,10 @@ export interface SignupCredentials {
   firstName: string
   lastName: string
   magicWord: string
+  dateOfBirth: string
+  genre: 'masculino' | 'femenino' | 'no_binario' | 'otro' | 'prefiero_no_decir'
+  documentNumber: string
+  provinceId: number
 }
 
 export interface AuthResponse {

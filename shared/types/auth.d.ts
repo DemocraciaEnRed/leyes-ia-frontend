@@ -8,13 +8,15 @@ declare module '#auth-utils' {
     imageUrl: string | null
     email?: string // Optional - not returned by API but may be decoded from JWT
     dateOfBirth?: string | null
-    genre?: 'male' | 'female' | 'non_binary' | 'other' | 'prefer_not_to_say' | null
+    genre?: 'masculino' | 'femenino' | 'no_binario' | 'otro' | 'prefiero_no_decir' | null
     documentNumber?: string | null
+    provinceId?: number | null
     hasSurveyProfile?: boolean
     surveyProfileLocks?: {
       dateOfBirthLockedAt?: string | null
       genreLockedAt?: string | null
       documentNumberLockedAt?: string | null
+      provinceLockedAt?: string | null
     }
   }
 

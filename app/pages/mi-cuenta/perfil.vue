@@ -7,12 +7,21 @@ const toast = useToast()
 const { user } = useAuth()
 
 const GENRE_OPTIONS = [
-  { label: 'Masculino', value: 'male' },
-  { label: 'Femenino', value: 'female' },
-  { label: 'No binario', value: 'non_binary' },
-  { label: 'Otro', value: 'other' },
-  { label: 'Prefiero no decirlo', value: 'prefer_not_to_say' }
+  { label: 'Masculino', value: 'masculino' },
+  { label: 'Femenino', value: 'femenino' },
+  { label: 'No binario', value: 'no_binario' },
+  { label: 'Otro', value: 'otro' },
+  { label: 'Prefiero no decirlo', value: 'prefiero_no_decir' }
 ]
+
+const { data: provincesResponse } = await useFetch<{ provinces: Array<{ id: number, code: string, name: string }> }>('/api/backend/utils/provinces')
+
+const PROVINCE_OPTIONS = computed(() => {
+  return (provincesResponse.value?.provinces || []).map((province) => ({
+    label: province.name,
+    value: province.id
+  }))
+})
 
 const submitting = ref(false)
 
@@ -20,23 +29,27 @@ const { data: profileResponse, refresh: refreshProfile } = await useAuthFetch<{ 
   dateOfBirth?: string | null
   genre?: string | null
   documentNumber?: string | null
+  provinceId?: number | null
   surveyProfileLocks?: {
     dateOfBirthLockedAt?: string | null
     genreLockedAt?: string | null
     documentNumberLockedAt?: string | null
+    provinceLockedAt?: string | null
   }
 } }>('/api/backend/users/me/profile')
 
 const profileForm = reactive({
   dateOfBirth: '',
   genre: '',
-  documentNumber: ''
+  documentNumber: '',
+  provinceId: undefined as number | undefined
 })
 
 watch(profileResponse, (value) => {
   profileForm.dateOfBirth = value?.user?.dateOfBirth || ''
   profileForm.genre = value?.user?.genre || ''
   profileForm.documentNumber = value?.user?.documentNumber || ''
+  profileForm.provinceId = value?.user?.provinceId ?? undefined
 }, { immediate: true })
 
 const surveyLocks = computed(() => {
@@ -44,17 +57,18 @@ const surveyLocks = computed(() => {
   return {
     dateOfBirthLocked: Boolean(locks.dateOfBirthLockedAt || profileResponse.value?.user?.dateOfBirth),
     genreLocked: Boolean(locks.genreLockedAt || profileResponse.value?.user?.genre),
-    documentNumberLocked: Boolean(locks.documentNumberLockedAt || profileResponse.value?.user?.documentNumber)
+    documentNumberLocked: Boolean(locks.documentNumberLockedAt || profileResponse.value?.user?.documentNumber),
+    provinceLocked: Boolean(locks.provinceLockedAt || profileResponse.value?.user?.provinceId)
   }
 })
 
 const allRequiredProfileCompleted = computed(() => {
-  return Boolean(profileForm.dateOfBirth && profileForm.genre && profileForm.documentNumber)
+  return Boolean(profileForm.dateOfBirth && profileForm.genre && profileForm.documentNumber && profileForm.provinceId)
 })
 
 const saveProfile = async () => {
   try {
-    const payload: Record<string, string> = {}
+    const payload: Record<string, string | number> = {}
 
     if (!surveyLocks.value.dateOfBirthLocked && profileForm.dateOfBirth) {
       payload.dateOfBirth = profileForm.dateOfBirth
@@ -66,6 +80,10 @@ const saveProfile = async () => {
 
     if (!surveyLocks.value.documentNumberLocked && profileForm.documentNumber) {
       payload.documentNumber = profileForm.documentNumber
+    }
+
+    if (!surveyLocks.value.provinceLocked && profileForm.provinceId) {
+      payload.provinceId = profileForm.provinceId
     }
 
     if (Object.keys(payload).length === 0) {
@@ -199,6 +217,20 @@ const saveProfile = async () => {
               placeholder="Solo números"
               inputmode="numeric"
               :disabled="surveyLocks.documentNumberLocked"
+            />
+          </UFormField>
+
+          <UFormField
+            label="Provincia"
+            name="provinceId"
+            :help="surveyLocks.provinceLocked ? 'Este campo está bloqueado.' : undefined"
+          >
+            <USelect
+              v-model="profileForm.provinceId"
+              :items="PROVINCE_OPTIONS"
+              class="w-full"
+              placeholder="Seleccioná una provincia"
+              :disabled="surveyLocks.provinceLocked"
             />
           </UFormField>
 
