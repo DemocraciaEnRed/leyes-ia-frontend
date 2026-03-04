@@ -18,10 +18,10 @@ const schema = z.object({
   password: z.string('La contraseña es obligatoria').min(8, 'Debe tener al menos 8 caracteres'),
   firstName: z.string('El nombre es obligatorio').min(1, 'El nombre es obligatorio'),
   lastName: z.string('El apellido es obligatorio').min(1, 'El apellido es obligatorio'),
-  dateOfBirth: z.string('La fecha de nacimiento es obligatoria').min(1, 'La fecha de nacimiento es obligatoria'),
-  genre: z.enum(['masculino', 'femenino', 'no_binario', 'otro', 'prefiero_no_decir'], 'El género es obligatorio'),
-  documentNumber: z.string('El número de documento es obligatorio').regex(/^\d+$/, 'Debe contener solo números'),
-  provinceId: z.number('La provincia es obligatoria').int('La provincia es obligatoria').min(1, 'La provincia es obligatoria'),
+  dateOfBirth: z.string().optional(),
+  genre: z.enum(['masculino', 'femenino', 'no_binario', 'otro', 'prefiero_no_decir']).optional(),
+  documentNumber: z.string().refine((value) => value === undefined || value === '' || /^\d+$/.test(value), 'Debe contener solo números').optional(),
+  provinceId: z.number().int().min(1).optional(),
   confirmPassword: z.string('Por favor confirma tu contraseña').min(8, 'Debe tener al menos 8 caracteres'),
   magicWord: z.string('La palabra mágica es obligatoria').min(1, 'La palabra mágica es obligatoria')
 }).refine(data => data.password === data.confirmPassword, {
@@ -74,7 +74,7 @@ const handleSignup = async (event: FormSubmitEvent<Schema>) => {
       magicWord: event.data.magicWord,
       dateOfBirth: event.data.dateOfBirth,
       genre: event.data.genre,
-      documentNumber: event.data.documentNumber,
+      documentNumber: event.data.documentNumber || undefined,
       provinceId: event.data.provinceId
     })
 
@@ -177,61 +177,61 @@ const handleSignup = async (event: FormSubmitEvent<Schema>) => {
             />
           </UFormField>
 
-          <div class="grid grid-cols-2 gap-4">
-            <UFormField
-              label="Fecha de nacimiento"
-              name="dateOfBirth"
-              required
-            >
-              <UInput
-                v-model="formState.dateOfBirth"
-                type="date"
-                required
-                class="w-full"
-              />
-            </UFormField>
+          <div class="rounded-lg border border-default p-4 space-y-4">
+            <p class="text-sm text-toned">
+              <strong>Opcional</strong> (Estos datos son requeridos para completar encuestas. Podes completar despues estos campos en tu perfil o contestando tu primer encuesta.)
+            </p>
 
-            <UFormField
-              label="Género"
-              name="genre"
-              required
-            >
-              <USelect
-                v-model="formState.genre"
-                :items="GENRE_OPTIONS"
-                class="w-full"
-                placeholder="Seleccioná una opción"
-              />
-            </UFormField>
-          </div>
+            <div class="grid grid-cols-2 gap-4">
+              <UFormField
+                label="Fecha de nacimiento"
+                name="dateOfBirth"
+              >
+                <UInput
+                  v-model="formState.dateOfBirth"
+                  type="date"
+                  class="w-full"
+                />
+              </UFormField>
 
-          <div class="grid grid-cols-2 gap-4">
-            <UFormField
-              label="Número de documento"
-              name="documentNumber"
-              required
-            >
-              <UInput
-                v-model="formState.documentNumber"
-                type="text"
-                placeholder="Solo números"
-                required
-                class="w-full"
-              />
-            </UFormField>
+              <UFormField
+                label="Género"
+                name="genre"
+              >
+                <USelect
+                  v-model="formState.genre"
+                  :items="GENRE_OPTIONS"
+                  class="w-full"
+                  placeholder="Seleccioná una opción"
+                />
+              </UFormField>
+            </div>
 
-            <UFormField
-              label="Provincia"
-              name="provinceId"
-              required
-            >
-              <USelect
-                v-model="formState.provinceId"
-                :items="PROVINCE_OPTIONS"
-                class="w-full"
-                placeholder="Seleccioná una provincia"
-              />
-            </UFormField>
+            <div class="grid grid-cols-2 gap-4">
+              <UFormField
+                label="Número de documento"
+                name="documentNumber"
+              >
+                <UInput
+                  v-model="formState.documentNumber"
+                  type="text"
+                  placeholder="Solo números"
+                  class="w-full"
+                />
+              </UFormField>
+
+              <UFormField
+                label="Provincia"
+                name="provinceId"
+              >
+                <USelect
+                  v-model="formState.provinceId"
+                  :items="PROVINCE_OPTIONS"
+                  class="w-full"
+                  placeholder="Seleccioná una provincia"
+                />
+              </UFormField>
+            </div>
           </div>
 
           <div class="grid grid-cols-2 gap-4">
