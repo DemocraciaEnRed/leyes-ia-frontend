@@ -84,7 +84,6 @@ const items = computed<DropdownMenuItem[][]>(() => {
       <div class="flex flex-col gap-2 justify-end" v-if="authLoggedIn">
               <UDropdownMenu :items="items" :content="{ align: 'start', side: 'left', sideOffset: 8 }">
                   <UAvatar :src="user?.imageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.fullName || 'User')}`" :alt="user?.fullName || 'User'" size="3xl" class="cursor-pointer shadow" />
-                  <UIcon name="lucide:caret-left" size="16" class="text-white" />
                 </UDropdownMenu>
                 <div class="text-right">
                     <UColorModeButton variant="solid" color="neutral" />
