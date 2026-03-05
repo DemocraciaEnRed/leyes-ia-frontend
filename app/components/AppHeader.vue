@@ -20,6 +20,82 @@ const navigationLinks: NavigationMenuItem[] = [
   }
 ]
 
+const mobileNavigationLinks = computed<NavigationMenuItem[][]>(() => {
+  const items: NavigationMenuItem[][] = [
+    navigationLinks
+  ]
+
+  if (!loggedIn.value) {
+    items.push([
+      {
+        label: 'Cuenta',
+        type: 'label'
+      },
+      {
+        label: 'Iniciar sesión',
+        icon: 'lucide:log-in',
+        to: '/auth/login'
+      },
+      {
+        label: 'Registrarse',
+        icon: 'lucide:user-plus',
+        to: '/auth/signup'
+      }
+    ])
+
+    return items
+  }
+
+  const accountItems: NavigationMenuItem[] = [
+    {
+      label: user.value?.fullName || 'User',
+      avatar: {
+        src: user.value?.imageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.value?.fullName || 'User')}`
+      },
+      type: 'label'
+    },
+    {
+      label: 'Perfil',
+      icon: 'lucide:user',
+      to: '/mi-cuenta/perfil'
+    }
+  ]
+
+  if (isAdmin.value) {
+    accountItems.push({
+      label: 'Admin Dashboard',
+      icon: 'lucide:shield',
+      to: '/admin/dashboard'
+    })
+  }
+
+  if (isLegislator.value) {
+    accountItems.push(
+      {
+        label: 'Mis proyectos',
+        icon: 'lucide:folder',
+        to: '/cuenta/proyectos'
+      },
+      {
+        label: 'Nuevo proyecto',
+        icon: 'lucide:plus-circle',
+        to: '/proyectos/panel/nuevo'
+      }
+    )
+  }
+
+  accountItems.push({
+    label: 'Cerrar sesión',
+    icon: 'lucide:log-out',
+    color: 'error',
+    onSelect: () => logout()
+  })
+
+  items.push(accountItems)
+
+  return items
+})
+
 const dropdownItems = computed<DropdownMenuItem[][]>(() => {
   if (!loggedIn.value) {
     return [
@@ -126,7 +202,7 @@ const dropdownItems = computed<DropdownMenuItem[][]>(() => {
     </template>
     <template #body>
       <UNavigationMenu
-        :items="navigationLinks"
+        :items="mobileNavigationLinks"
         orientation="vertical"
         class="-mx-2.5"
       />
