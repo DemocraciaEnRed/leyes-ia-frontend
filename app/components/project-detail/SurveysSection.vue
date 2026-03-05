@@ -15,6 +15,7 @@ interface PublicSurvey {
 }
 
 const props = defineProps<{
+  projectSlug: string
   featuredSurvey?: PublicSurvey | null
   surveys?: PublicSurvey[]
 }>()
@@ -25,6 +26,8 @@ const hasData = computed(() => Boolean(props.featuredSurvey) || availableSurveys
 const surveyDescription = (survey: PublicSurvey) => {
   return survey.about || survey.welcomeDescription || 'Encuesta abierta para participación ciudadana.'
 }
+
+const surveyLink = (surveyId: number) => `/proyectos/${props.projectSlug}/encuestas/${surveyId}`
 </script>
 
 <template>
@@ -66,6 +69,16 @@ const surveyDescription = (survey: PublicSurvey) => {
         <p class="text-sm text-muted">
           {{ surveyDescription(featuredSurvey) }}
         </p>
+
+        <div>
+          <UButton
+            color="primary"
+            :to="surveyLink(featuredSurvey.id)"
+            icon="lucide:play"
+          >
+            Responder encuesta
+          </UButton>
+        </div>
       </div>
     </UPageCard>
 
@@ -108,12 +121,23 @@ const surveyDescription = (survey: PublicSurvey) => {
           </p>
 
           <div class="mt-auto pt-2">
-            <UBadge
-              color="neutral"
-              variant="outline"
-            >
-              {{ item.responsesCount }} respuestas
-            </UBadge>
+            <div class="flex items-center justify-between gap-2">
+              <UBadge
+                color="neutral"
+                variant="outline"
+              >
+                {{ item.responsesCount }} respuestas
+              </UBadge>
+
+              <UButton
+                color="primary"
+                variant="soft"
+                size="sm"
+                :to="surveyLink(item.id)"
+              >
+                Responder
+              </UButton>
+            </div>
           </div>
         </div>
       </UPageCard>

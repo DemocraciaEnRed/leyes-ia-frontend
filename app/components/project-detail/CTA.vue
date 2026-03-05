@@ -26,11 +26,5 @@ const ctaLinks = computed(() => ([
     variant="outline"
     :links="ctaLinks"
   >
-    <template #top>
-      <div class="mx-auto mb-2 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1 text-xs font-semibold text-primary">
-        <UIcon name="lucide:megaphone" />
-        Estilo campaña ciudadana
-      </div>
-    </template>
   </UPageCTA>
 </template>

@@ -74,3 +74,8 @@ Check out the [deployment documentation](https://nuxt.com/docs/getting-started/d
 ### Backward compatibility
 
 Legacy pages under `/legislador/hubs/...` are still available and are aliased to the new route structure via Nuxt page routing hooks.
+
+## Survey response flow docs
+
+- `docs/SURVEY_RESPONSE_FLOW.md`
+- `docs/SURVEY_QA_CHECKLIST.md`

@@ -168,6 +168,7 @@ const availableSurveys = computed(() => availableSurveysResponse.value?.surveys 
 				<ProjectDetailQuestionsSection :questions="proposedQuestions" />
 				<USeparator icon="lucide:chart-no-axes-column" class="my-2" />
 				<ProjectDetailSurveysSection
+					:project-slug="projectSlug"
 					:featured-survey="featuredSurvey"
 					:surveys="availableSurveys"
 				/>

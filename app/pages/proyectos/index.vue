@@ -152,7 +152,6 @@ const clearCategoryFromDrawer = async () => {
         >
           <UButton
             :label="categoryFilterButtonLabel"
-            color="verdecito"
             variant="outline"
             trailing-icon="i-lucide-chevron-up"
             class="w-full max-w-sm justify-between rounded-full"
@@ -162,7 +161,6 @@ const clearCategoryFromDrawer = async () => {
             <div class="flex flex-col gap-2 pb-4">
               <UButton
                 label="Todas las categorías"
-                color="verdecito"
                 :variant="categorySelected === undefined ? 'solid' : 'outline'"
                 class="justify-start"
                 @click="clearCategoryFromDrawer"
@@ -171,7 +169,6 @@ const clearCategoryFromDrawer = async () => {
                 v-for="(categoria, index) in categorias"
                 :key="`drawer-${index}`"
                 :label="categoria"
-                color="verdecito"
                 :variant="getVariant(index)"
                 class="justify-start"
                 @click="selectCategoryFromDrawer(index)"
