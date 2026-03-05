@@ -53,6 +53,11 @@ type SurveyEligibilityResponse = {
   message: string
 }
 
+type SurveyRuntimeData = {
+  survey: PublicSurvey
+  eligibility: SurveyEligibilityResponse
+}
+
 type ProvinceResponse = {
   provinces: Array<{ id: number, code: string, name: string }>
 }
@@ -96,10 +101,44 @@ const provinceOptions = computed(() => {
   }))
 })
 
-const runtimeError = ref<string | null>(null)
-const isLoadingRuntime = ref(false)
-const surveyData = ref<PublicSurvey | null>(null)
-const eligibilityData = ref<SurveyEligibilityResponse | null>(null)
+const {
+  data: runtimeData,
+  pending: isLoadingRuntime,
+  error: runtimeFetchError,
+  refresh: refreshRuntime
+} = await useAsyncData<SurveyRuntimeData | null>(
+  () => `survey-runtime:${projectSlug.value || 'unknown'}:${surveyId.value || 'unknown'}`,
+  async () => {
+    if (!projectSlug.value || !surveyId.value)
+      return null
+
+    const [surveyResponse, eligibilityResponse] = await Promise.all([
+      $fetch<PublicSurveyResponse>(`/api/backend/hub/projects/slug/${projectSlug.value}/surveys/${surveyId.value}`),
+      $fetch<SurveyEligibilityResponse>(`/api/backend/hub/projects/slug/${projectSlug.value}/surveys/${surveyId.value}/respondent-eligibility`)
+    ])
+
+    return {
+      survey: surveyResponse.survey,
+      eligibility: eligibilityResponse
+    }
+  },
+  {
+    watch: [projectSlug, surveyId],
+    default: () => null
+  }
+)
+
+const runtimeError = computed<string | null>(() => {
+  const normalizedError = runtimeFetchError.value as { data?: { error?: string, message?: string }, message?: string } | null
+
+  if (!normalizedError)
+    return null
+
+  return normalizedError?.data?.error || normalizedError?.data?.message || normalizedError?.message || 'No se pudo cargar la encuesta.'
+})
+
+const surveyData = computed<PublicSurvey | null>(() => runtimeData.value?.survey || null)
+const eligibilityData = computed<SurveyEligibilityResponse | null>(() => runtimeData.value?.eligibility || null)
 const hasOpenedProfileModal = ref(false)
 const submittingProfile = ref(false)
 const anonymousProfileReady = ref(false)
@@ -165,29 +204,10 @@ const isSurveyReady = computed(() => {
 })
 
 const loadRuntime = async () => {
-  if (!projectSlug.value || !surveyId.value)
-    return
+  await refreshRuntime()
 
-  runtimeError.value = null
-  isLoadingRuntime.value = true
-
-  try {
-    const [surveyResponse, eligibilityResponse] = await Promise.all([
-      $fetch<PublicSurveyResponse>(`/api/backend/hub/projects/slug/${projectSlug.value}/surveys/${surveyId.value}`),
-      $fetch<SurveyEligibilityResponse>(`/api/backend/hub/projects/slug/${projectSlug.value}/surveys/${surveyId.value}/respondent-eligibility`)
-    ])
-
-    surveyData.value = surveyResponse.survey
-    eligibilityData.value = eligibilityResponse
-
-    if (eligibilityResponse.mode === 'anonymous') {
-      anonymousProfileReady.value = false
-    }
-  } catch (error: unknown) {
-    const normalizedError = error as { data?: { error?: string, message?: string }, message?: string }
-    runtimeError.value = normalizedError?.data?.error || normalizedError?.data?.message || normalizedError?.message || 'No se pudo cargar la encuesta.'
-  } finally {
-    isLoadingRuntime.value = false
+  if (eligibilityData.value?.mode === 'anonymous') {
+    anonymousProfileReady.value = false
   }
 }
 
@@ -307,11 +327,10 @@ const submitSurvey = async (answers: Record<number, SurveyAnswerValue>) => {
   })
 }
 
-watch(() => [projectSlug.value, surveyId.value], () => {
-  loadRuntime()
-}, { immediate: true })
-
 watch(() => shouldShowLoggedProfileGate.value, async (shouldOpenModal) => {
+  if (import.meta.server)
+    return
+
   if (!shouldOpenModal || hasOpenedProfileModal.value || submittingProfile.value)
     return
 
@@ -322,6 +341,10 @@ watch(() => shouldShowLoggedProfileGate.value, async (shouldOpenModal) => {
 watch(() => eligibilityData.value?.mode, (mode) => {
   if (mode === 'authenticated') {
     hasOpenedProfileModal.value = false
+  }
+
+  if (mode === 'anonymous') {
+    anonymousProfileReady.value = false
   }
 })
 

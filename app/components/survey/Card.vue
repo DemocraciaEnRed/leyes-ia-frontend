@@ -28,16 +28,10 @@ const emit = defineEmits<{
 }>()
 
 const normalizedType = computed(() => {
-  const rawType = (props.question.type || '').toLowerCase().trim()
-
-  if (rawType === 'single-choice' || rawType === 'multiple-choice' || rawType === 'rating' || rawType === 'open-ended')
-    return rawType
-
-  if (rawType === 'texto')
-    return 'open-ended'
-
-  return 'open-ended'
+  return normalizeSurveyQuestionType(props.question.type)
 })
+
+const questionTypeLabel = computed(() => getQuestionTypeLabel(normalizedType.value))
 
 const selectedSingleChoice = computed({
   get: () => typeof props.modelValue?.value === 'string' ? props.modelValue.value : '',
@@ -129,16 +123,17 @@ const selectRating = (value: number) => {
         <UBadge
           color="primary"
           variant="soft"
+          icon="lucide:circle-question-mark"
         >
-          Pregunta {{ index + 1 }} de {{ total }}
+           {{ index + 1 }} de {{ total }}
         </UBadge>
 
         <UBadge
-          v-if="question.type"
+          v-if="questionTypeLabel"
           color="neutral"
           variant="outline"
         >
-          {{ question.type }}
+          {{ questionTypeLabel }}
         </UBadge>
 
         <UBadge
@@ -154,12 +149,34 @@ const selectRating = (value: number) => {
         {{ question.questionText }}
       </h2>
 
-      <p
+      <UCollapsible
         v-if="question.helpText"
-        class="text-sm text-muted"
+        class="flex flex-col gap-2"
       >
-        {{ question.helpText }}
-      </p>
+        <template #default="{ open }">
+          <UButton
+            label="Más información"
+            color="neutral"
+            variant="subtle"
+            size="xs"
+            class="w-fit"
+          >
+            <template #trailing>
+              <UIcon
+                name="lucide:chevron-down"
+                class="transition-transform duration-200"
+                :class="open ? 'rotate-180' : ''"
+              />
+            </template>
+          </UButton>
+        </template>
+
+        <template #content>
+          <p class="text-sm text-muted">
+            {{ question.helpText }}
+          </p>
+        </template>
+      </UCollapsible>
     </div>
 
     <div class="space-y-4">
@@ -215,7 +232,8 @@ const selectRating = (value: number) => {
         v-else
         v-model="openEndedAnswer"
         autoresize
-        :rows="4"
+        :rows="3"
+        size="xs"
         class="w-full"
         :max-length="maxLength"
         placeholder="Escribe aquí tu respuesta..."
@@ -224,8 +242,10 @@ const selectRating = (value: number) => {
       <UTextarea
         v-if="question.openTextEnabled && normalizedType !== 'open-ended'"
         v-model="openTextAnswer"
-        autoresize
+        :autoresize="true"
         :rows="3"
+        :maxrows="7"
+        size="xs"
         class="w-full"
         placeholder="¿Querés agregar un comentario opcional?"
       />

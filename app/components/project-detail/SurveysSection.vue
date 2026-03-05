@@ -97,12 +97,6 @@ const surveyLink = (surveyId: number) => `/proyectos/${props.projectSlug}/encues
         <div class="flex h-full flex-col gap-3">
           <div class="flex flex-wrap items-center gap-2">
             <UBadge
-              color="neutral"
-              variant="subtle"
-            >
-              {{ item.type }}
-            </UBadge>
-            <UBadge
               v-if="item.isFeatured"
               color="warning"
               variant="soft"

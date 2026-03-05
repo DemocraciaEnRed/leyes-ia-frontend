@@ -20,6 +20,8 @@ const props = defineProps<{
   welcomeTitle?: string
   welcomeDescription?: string
   startLabel?: string
+  completionProjectHref?: string
+  completionResultsHref?: string
   submitAction?: (answers: Record<number, SurveyAnswerValue>) => Promise<void>
 }>()
 
@@ -45,15 +47,7 @@ const currentAnswer = computed(() => {
 })
 
 const normalizedQuestionType = computed(() => {
-  const rawType = (currentQuestion.value?.type || '').toLowerCase().trim()
-
-  if (rawType === 'single-choice' || rawType === 'multiple-choice' || rawType === 'rating' || rawType === 'open-ended')
-    return rawType
-
-  if (rawType === 'texto')
-    return 'open-ended'
-
-  return 'open-ended'
+  return normalizeSurveyQuestionType(currentQuestion.value?.type)
 })
 
 const hasAnswerValue = (answer: SurveyAnswerValue | null, questionType: string) => {
@@ -195,23 +189,27 @@ function updateCurrentAnswer(value: SurveyAnswerValue) {
     <UPageCard
       v-if="!hasStarted"
       variant="outline"
-      class="mx-auto w-full max-w-3xl p-8"
-      :ui="{ container: 'space-y-4' }"
+      class="mx-auto w-full h-full max-w-3xl p-6 space-y-4 md:h-2/3 lg:h-2/3"
+      :ui="{ container: 'justify-center items-center text-center' }"
     >
+    <div class="flex w-full flex-col items-center gap-6">
       <h1 class="text-2xl font-semibold md:text-3xl">
         {{ welcomeTitle || 'Encuesta ciudadana' }}
       </h1>
       <p class="text-sm text-muted md:text-base">
         {{ welcomeDescription || 'Tu opinión nos ayuda a mejorar esta propuesta. Te tomará menos de 2 minutos.' }}
       </p>
-      <UButton
+
+        <UButton
         color="primary"
-        size="lg"
+        size="xl"
+        class="w-full justify-center rounded-full"
         trailing-icon="lucide:play"
         @click="startSurvey"
-      >
+        >
         {{ startLabel || 'Comenzar' }}
       </UButton>
+    </div>
     </UPageCard>
 
     <UPageCard
@@ -226,6 +224,26 @@ function updateCurrentAnswer(value: SurveyAnswerValue) {
       <p class="text-sm text-muted md:text-base">
         Tu respuesta fue registrada. Valoramos mucho tu tiempo y aporte.
       </p>
+
+      <div class="flex flex-col gap-2 sm:flex-row">
+        <UButton
+          v-if="props.completionResultsHref"
+          color="primary"
+          class="w-full justify-center rounded-full"
+          :to="props.completionResultsHref"
+        >
+          Ver resultados
+        </UButton>
+        <UButton
+          v-if="props.completionProjectHref"
+          variant="subtle"
+          color="neutral"
+          class="w-full justify-center rounded-full"
+          :to="props.completionProjectHref"
+        >
+          Volver al proyecto
+        </UButton>
+      </div>
     </UPageCard>
 
     <div

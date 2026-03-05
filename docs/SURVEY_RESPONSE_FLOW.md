@@ -67,7 +67,7 @@ Soporta tipos:
 
 El submit envía:
 - `POST /api/backend/projects/:projectId/surveys/:surveyId/responses`
-- Payload con `answers` estructurado por pregunta y datos demográficos si anónimo.
+- Payload con `answers` como array de items `{ questionIndex, value, openText? }` y datos demográficos si anónimo.
 
 ## Manejo de errores UX
 
