@@ -15,7 +15,6 @@ const isProfileComplete = computed(() => {
   return Boolean(
     currentUser.dateOfBirth
     && currentUser.genre
-    && currentUser.documentNumber
     && currentUser.provinceId
   )
 })

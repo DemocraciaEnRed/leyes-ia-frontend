@@ -9,13 +9,11 @@ declare module '#auth-utils' {
     email?: string // Optional - not returned by API but may be decoded from JWT
     dateOfBirth?: string | null
     genre?: 'masculino' | 'femenino' | 'no_binario' | 'otro' | 'prefiero_no_decir' | null
-    documentNumber?: string | null
     provinceId?: number | null
     hasSurveyProfile?: boolean
     surveyProfileLocks?: {
       dateOfBirthLockedAt?: string | null
       genreLockedAt?: string | null
-      documentNumberLockedAt?: string | null
       provinceLockedAt?: string | null
     }
   }

@@ -28,12 +28,10 @@ const submitting = ref(false)
 const { data: profileResponse, refresh: refreshProfile } = await useAuthFetch<{ user: {
   dateOfBirth?: string | null
   genre?: string | null
-  documentNumber?: string | null
   provinceId?: number | null
   surveyProfileLocks?: {
     dateOfBirthLockedAt?: string | null
     genreLockedAt?: string | null
-    documentNumberLockedAt?: string | null
     provinceLockedAt?: string | null
   }
 } }>('/api/backend/users/me/profile')
@@ -41,14 +39,12 @@ const { data: profileResponse, refresh: refreshProfile } = await useAuthFetch<{ 
 const profileForm = reactive({
   dateOfBirth: '',
   genre: '',
-  documentNumber: '',
   provinceId: undefined as number | undefined
 })
 
 watch(profileResponse, (value) => {
   profileForm.dateOfBirth = value?.user?.dateOfBirth || ''
   profileForm.genre = value?.user?.genre || ''
-  profileForm.documentNumber = value?.user?.documentNumber || ''
   profileForm.provinceId = value?.user?.provinceId ?? undefined
 }, { immediate: true })
 
@@ -57,13 +53,12 @@ const surveyLocks = computed(() => {
   return {
     dateOfBirthLocked: Boolean(locks.dateOfBirthLockedAt || profileResponse.value?.user?.dateOfBirth),
     genreLocked: Boolean(locks.genreLockedAt || profileResponse.value?.user?.genre),
-    documentNumberLocked: Boolean(locks.documentNumberLockedAt || profileResponse.value?.user?.documentNumber),
     provinceLocked: Boolean(locks.provinceLockedAt || profileResponse.value?.user?.provinceId)
   }
 })
 
 const allRequiredProfileCompleted = computed(() => {
-  return Boolean(profileForm.dateOfBirth && profileForm.genre && profileForm.documentNumber && profileForm.provinceId)
+  return Boolean(profileForm.dateOfBirth && profileForm.genre && profileForm.provinceId)
 })
 
 const saveProfile = async () => {
@@ -76,10 +71,6 @@ const saveProfile = async () => {
 
     if (!surveyLocks.value.genreLocked && profileForm.genre) {
       payload.genre = profileForm.genre
-    }
-
-    if (!surveyLocks.value.documentNumberLocked && profileForm.documentNumber) {
-      payload.documentNumber = profileForm.documentNumber
     }
 
     if (!surveyLocks.value.provinceLocked && profileForm.provinceId) {
@@ -213,20 +204,6 @@ const saveProfile = async () => {
               class="w-full"
               placeholder="Seleccioná una opción"
               :disabled="surveyLocks.genreLocked"
-            />
-          </UFormField>
-
-          <UFormField
-            label="Número de documento"
-            name="documentNumber"
-            :help="surveyLocks.documentNumberLocked ? 'Este campo está bloqueado.' : undefined"
-          >
-            <UInput
-              v-model="profileForm.documentNumber"
-              class="w-full"
-              placeholder="Solo números"
-              inputmode="numeric"
-              :disabled="surveyLocks.documentNumberLocked"
             />
           </UFormField>
 

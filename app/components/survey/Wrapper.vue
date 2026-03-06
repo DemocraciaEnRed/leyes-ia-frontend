@@ -91,10 +91,6 @@ const getFriendlySubmitError = (error: unknown) => {
     return 'Ya registraste una respuesta para esta encuesta.'
   }
 
-  if (errorCode === 'DUPLICATE_RESPONSE_DOCUMENT') {
-    return 'Ya existe una respuesta para esta encuesta con ese número de documento.'
-  }
-
   if (errorCode === 'PROFILE_INCOMPLETE') {
     return 'Necesitas completar tu perfil antes de responder esta encuesta.'
   }

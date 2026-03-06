@@ -144,17 +144,15 @@ const submittingProfile = ref(false)
 const anonymousProfileReady = ref(false)
 
 const anonymousRespondentData = reactive({
-  dateOfBirth: '',
+  age: undefined as number | undefined,
   genre: '',
-  documentNumber: '',
   provinceId: undefined as number | undefined
 })
 
 const canContinueAnonymous = computed(() => {
   return Boolean(
-    anonymousRespondentData.dateOfBirth
+    anonymousRespondentData.age && anonymousRespondentData.age >= 14
       && anonymousRespondentData.genre
-      && anonymousRespondentData.documentNumber
       && anonymousRespondentData.provinceId,
   )
 })
@@ -214,7 +212,6 @@ const loadRuntime = async () => {
 const saveProfileAndRefreshEligibility = async (payload: {
   dateOfBirth: string
   genre: string
-  documentNumber: string
   provinceId: number
 }) => {
   try {
@@ -254,7 +251,6 @@ const openProfileGateModal = async () => {
     initialData: {
       dateOfBirth: user.value?.dateOfBirth || null,
       genre: user.value?.genre || null,
-      documentNumber: user.value?.documentNumber || null,
       provinceId: user.value?.provinceId || null
     },
     provinceOptions: provinceOptions.value
@@ -315,9 +311,8 @@ const submitSurvey = async (answers: Record<number, SurveyAnswerValue>) => {
   }
 
   if (eligibilityData.value?.mode === 'anonymous') {
-    payload.dateOfBirth = anonymousRespondentData.dateOfBirth
+    payload.age = anonymousRespondentData.age
     payload.genre = anonymousRespondentData.genre
-    payload.documentNumber = anonymousRespondentData.documentNumber
     payload.provinceId = anonymousRespondentData.provinceId
   }
 
@@ -509,13 +504,17 @@ const handleLogoClick = async () => {
         </h1>
 
         <UFormField
-          label="Fecha de nacimiento"
-          name="anonymousDateOfBirth"
+          label="Edad"
+          name="anonymousAge"
+          help="Debés tener al menos 14 años para responder esta encuesta."
         >
           <UInput
-            v-model="anonymousRespondentData.dateOfBirth"
-            type="date"
+            v-model.number="anonymousRespondentData.age"
+            type="number"
+            min="14"
+            step="1"
             class="w-full"
+            placeholder="Ingresá tu edad"
           />
         </UFormField>
 
@@ -534,19 +533,6 @@ const handleLogoClick = async () => {
               { label: 'Prefiero no decirlo', value: 'prefiero_no_decir' }
             ]"
             placeholder="Seleccioná una opción"
-          />
-        </UFormField>
-
-        <UFormField
-          label="Número de documento"
-          name="anonymousDocumentNumber"
-          help="Este dato se usa para evitar respuestas duplicadas. Se almacena de forma interna y no se comparte con el legislador."
-        >
-          <UInput
-            v-model="anonymousRespondentData.documentNumber"
-            class="w-full"
-            placeholder="Solo números"
-            inputmode="numeric"
           />
         </UFormField>
 

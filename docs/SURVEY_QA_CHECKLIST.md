@@ -27,8 +27,7 @@ Checklist manual para validar UX del flujo de respuesta de encuestas.
 
 ## Flujo anónimo
 
-- [ ] Se solicita fecha de nacimiento, género, provincia y DNI antes de comenzar.
-- [ ] Debajo de DNI aparece texto de privacidad (uso interno, no compartido con legislador).
+- [ ] Se solicita edad (mínimo 14), género y provincia antes de comenzar.
 - [ ] Sin completar esos datos no permite continuar.
 
 ## Preguntas y validación
@@ -41,7 +40,6 @@ Checklist manual para validar UX del flujo de respuesta de encuestas.
 
 - [ ] Submit exitoso muestra estado de finalización.
 - [ ] Duplicado logueado muestra mensaje amigable de ya respondida.
-- [ ] Duplicado anónimo por DNI muestra mensaje amigable de duplicado.
 - [ ] Errores de validación (`INVALID_ANSWERS`, `INVALID_RESPONDENT_DATA`) muestran copy claro.
 
 ## Regresión rápida

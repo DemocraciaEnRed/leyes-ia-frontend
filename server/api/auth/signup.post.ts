@@ -15,7 +15,6 @@ export default defineEventHandler(async (event) => {
         lastName: body.lastName,
         dateOfBirth: body.dateOfBirth,
         genre: body.genre,
-        documentNumber: body.documentNumber,
         provinceId: body.provinceId,
       }
     })

@@ -3,7 +3,6 @@ const props = withDefaults(defineProps<{
   initialData?: {
     dateOfBirth?: string | null
     genre?: string | null
-    documentNumber?: string | null
     provinceId?: number | null
   }
   provinceOptions: Array<{ label: string, value: number }>
@@ -15,7 +14,6 @@ const emit = defineEmits<{
   close: [payload: {
     dateOfBirth: string
     genre: string
-    documentNumber: string
     provinceId: number
   } | null]
 }>()
@@ -31,7 +29,6 @@ const GENRE_OPTIONS = [
 const form = reactive({
   dateOfBirth: props.initialData?.dateOfBirth || '',
   genre: props.initialData?.genre || '',
-  documentNumber: props.initialData?.documentNumber || '',
   provinceId: props.initialData?.provinceId || undefined as number | undefined
 })
 
@@ -40,31 +37,24 @@ const formError = ref('')
 watch(() => props.initialData, (value) => {
   form.dateOfBirth = value?.dateOfBirth || ''
   form.genre = value?.genre || ''
-  form.documentNumber = value?.documentNumber || ''
   form.provinceId = value?.provinceId ?? undefined
 }, { deep: true })
 
 const canSubmit = computed(() => {
-  return Boolean(form.dateOfBirth && form.genre && form.documentNumber && form.provinceId)
+  return Boolean(form.dateOfBirth && form.genre && form.provinceId)
 })
 
 const handleSubmit = () => {
   formError.value = ''
 
   if (!canSubmit.value) {
-    formError.value = 'Completa fecha de nacimiento, género, documento y provincia para continuar.'
-    return
-  }
-
-  if (!/^\d+$/.test(form.documentNumber.trim())) {
-    formError.value = 'El número de documento debe contener solo dígitos.'
+    formError.value = 'Completa fecha de nacimiento, género y provincia para continuar.'
     return
   }
 
   emit('close', {
     dateOfBirth: form.dateOfBirth,
     genre: form.genre,
-    documentNumber: form.documentNumber.trim(),
     provinceId: Number(form.provinceId)
   })
 }
@@ -111,18 +101,6 @@ const handleCancel = () => {
             :items="GENRE_OPTIONS"
             class="w-full"
             placeholder="Seleccioná una opción"
-          />
-        </UFormField>
-
-        <UFormField
-          label="Número de documento"
-          name="documentNumber"
-        >
-          <UInput
-            v-model="form.documentNumber"
-            class="w-full"
-            placeholder="Solo números"
-            inputmode="numeric"
           />
         </UFormField>
 

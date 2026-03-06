@@ -37,20 +37,11 @@ La página consulta en paralelo:
 
 - Si `allowAnonymousResponses = true`:
   - Debe completar antes de empezar:
-    - fecha de nacimiento
+    - edad (mínimo 14)
     - género
     - provincia
-    - número de documento
 - Si no permite anónimos:
   - Se muestra CTA para iniciar sesión.
-
-## Texto de privacidad en DNI (anónimo)
-
-En el campo DNI del gate anónimo se muestra una ayuda explícita:
-
-- El dato se usa para evitar respuestas duplicadas.
-- Se almacena internamente.
-- No se comparte con el legislador.
 
 ## Render de preguntas y envío
 
@@ -74,7 +65,6 @@ El submit envía:
 `Wrapper.vue` mapea códigos backend a mensajes amigables:
 - `ALREADY_RESPONDED` (vía elegibilidad previa al submit)
 - `DUPLICATE_RESPONSE_USER`
-- `DUPLICATE_RESPONSE_DOCUMENT`
 - `PROFILE_INCOMPLETE`
 - `INVALID_RESPONDENT_DATA`
 - `INVALID_ANSWERS`
