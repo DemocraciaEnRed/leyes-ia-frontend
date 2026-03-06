@@ -88,7 +88,21 @@
 }
 
 :root {
-  --ui-radius: 0.375rem
+  --ui-radius: 0.375rem;
+
+  --vis-color0: #3F7BEB;
+  --vis-color1: #E85E71;
+  --vis-color2: #D9A53A;
+  --vis-color3: #8FB463;
+  --vis-color4: #00A989;
+  --vis-color5: #5C4FB0;
+
+  --vis-dark-color0: #6EA3FF;
+  --vis-dark-color1: #FF8796;
+  --vis-dark-color2: #FFD27A;
+  --vis-dark-color3: #B6D98A;
+  --vis-dark-color4: #27D6AF;
+  --vis-dark-color5: #8D82E4;
 }
 
 /* .dark {

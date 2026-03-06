@@ -67,8 +67,10 @@ interface SurveyResultsResponse {
   demographics: {
     totalWithGenre: number
     totalWithAge: number
+    totalWithProvince: number
     genre: DemographicDistributionItem[]
     ageRanges: DemographicDistributionItem[]
+    provinces: DemographicDistributionItem[]
   }
 }
 
@@ -202,6 +204,8 @@ const ageChartCategories = {
   }
 }
 
+const provinceDistribution = computed(() => surveyResults.value?.demographics?.provinces || [])
+
 const getOpenEndedTotalPages = (question: OpenEndedQuestionResult) => {
   return Math.max(1, Math.ceil(question.responses.length / OPEN_ENDED_PAGE_SIZE))
 }
@@ -301,9 +305,6 @@ const getOpenEndedVisibleResponses = (question: OpenEndedQuestionResult) => {
             <h2 class="text-lg font-semibold md:text-xl">
               Estadística demográfica
             </h2>
-            <p class="text-xs text-muted">
-              Nota: para preservar privacidad, categorías con muy pocos casos se agrupan en “Otros / No informado”.
-            </p>
 
             <div class="grid gap-4 lg:grid-cols-2">
               <UPageCard
@@ -372,6 +373,66 @@ const getOpenEndedVisibleResponses = (question: OpenEndedQuestionResult) => {
                 </p>
               </UPageCard>
             </div>
+
+            <UPageCard
+              variant="subtle"
+              :ui="{ container: 'space-y-3' }"
+            >
+              <h3 class="font-medium">
+                Distribución por provincia
+              </h3>
+              <p class="text-xs text-muted">
+                Respondentes con provincia informada: {{ surveyResults?.demographics?.totalWithProvince || 0 }}
+              </p>
+
+              <div v-if="provinceDistribution.length > 0" class="grid gap-4 lg:grid-cols-2">
+                <DonutChart
+                  :data="demographicDonutData(provinceDistribution)"
+                  :categories="demographicDonutCategories(provinceDistribution)"
+                  :radius="120"
+                  :height="260"
+                />
+
+                <div class="overflow-x-auto rounded-lg border border-default">
+                  <table class="w-full text-sm">
+                    <thead class="bg-elevated/40 text-xs text-muted">
+                      <tr>
+                        <th class="px-3 py-2 text-left font-medium">
+                          Provincia
+                        </th>
+                        <th class="px-3 py-2 text-right font-medium">
+                          Respuestas
+                        </th>
+                        <th class="px-3 py-2 text-right font-medium">
+                          %
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr
+                        v-for="item in provinceDistribution"
+                        :key="item.key"
+                        class="border-t border-default"
+                      >
+                        <td class="px-3 py-2 text-highlighted">
+                          {{ item.label }}
+                        </td>
+                        <td class="px-3 py-2 text-right text-muted">
+                          {{ item.count }}
+                        </td>
+                        <td class="px-3 py-2 text-right text-muted">
+                          {{ item.percentage }}%
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <p v-else class="text-sm text-muted">
+                No hay datos suficientes para mostrar provincias.
+              </p>
+            </UPageCard>
           </UPageCard>
 
           <UPageCard
