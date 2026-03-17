@@ -6,7 +6,8 @@ export default defineNuxtConfig({
     '@nuxtjs/mdc',
     '@nuxt/icon',
     'nuxt-auth-utils',
-    'nuxt-charts'
+    'nuxt-charts',
+    'nuxt-gtag'
   ],
 
   devtools: {
@@ -37,7 +38,16 @@ export default defineNuxtConfig({
       frontendUrl: import.meta.env.NUXT_FRONTEND_URL || 'http://localhost:3000'
     }
   },
-  
+  // https://nuxt.com/modules/gtag
+  // Instead of hard-coding your Google tag ID in your Nuxt configuration,
+  // you can set your desired option in your project's .env file,
+  // leveraging automatically replaced public runtime config values by
+  // matching environment variables at runtime.
+  //
+  // NUXT_PUBLIC_GTAG_ID=G-XXXXXXXXXX
+  gtag: {
+    enabled: process.env.NODE_ENV === 'production',
+  },
   routeRules: {
     '/': { prerender: true }
   },
@@ -57,7 +67,6 @@ export default defineNuxtConfig({
   //     }
   //   }
   // },
-
   compatibilityDate: '2025-01-15',
   hooks: {
     'pages:extend'(pages) {
