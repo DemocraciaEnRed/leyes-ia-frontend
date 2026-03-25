@@ -1,4 +1,6 @@
 <script setup>
+import { es } from '@nuxt/ui/locale'
+
 useHead({
   meta: [
     { name: 'viewport', content: 'width=device-width, initial-scale=1' }
@@ -29,6 +31,7 @@ useSeoMeta({
   <UApp
     :toaster="{ position: 'top-right' }"
     :tooltip="{ delayDuration: 200 }"
+    :locale="es"
   >
     <NuxtLoadingIndicator
       class="z-100"

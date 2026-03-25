@@ -1,10 +1,13 @@
 <script setup lang="ts">
+import { CalendarDate, today, getLocalTimeZone } from '@internationalized/date'
+
 definePageMeta({
   middleware: 'auth'
 })
 
 const toast = useToast()
 const { user, refreshSession } = useAuth()
+const inputDate = useTemplateRef('inputDate')
 
 const GENRE_OPTIONS = [
   { label: 'Masculino', value: 'masculino' },
@@ -36,6 +39,11 @@ const { data: profileResponse, refresh: refreshProfile } = await useAuthFetch<{ 
   }
 } }>('/api/backend/users/me/profile')
 
+const dateOfBirthEditable = shallowRef<CalendarDate | null>(null)
+const maxDateOfBirth = today(getLocalTimeZone())
+// constructor for CalendarDate is
+// constructor(year: number, month: number, day: number);
+
 const profileForm = reactive({
   dateOfBirth: '',
   genre: '',
@@ -46,7 +54,23 @@ watch(profileResponse, (value) => {
   profileForm.dateOfBirth = value?.user?.dateOfBirth || ''
   profileForm.genre = value?.user?.genre || ''
   profileForm.provinceId = value?.user?.provinceId ?? undefined
+  if (profileForm.dateOfBirth) {
+    const parts = profileForm.dateOfBirth.split('-').map(Number)
+
+    if (parts.length === 3 && parts.every(part => Number.isFinite(part))) {
+      const [year, month, day] = parts as [number, number, number]
+      dateOfBirthEditable.value = new CalendarDate(year, month, day)
+    } else {
+      dateOfBirthEditable.value = null
+    }
+  } else {
+    dateOfBirthEditable.value = null
+  }
 }, { immediate: true })
+
+watch(dateOfBirthEditable, (value) => {
+  profileForm.dateOfBirth = value ? value.toString() : ''
+})
 
 const surveyLocks = computed(() => {
   const locks = profileResponse.value?.user?.surveyProfileLocks || {}
@@ -64,9 +88,10 @@ const allRequiredProfileCompleted = computed(() => {
 const saveProfile = async () => {
   try {
     const payload: Record<string, string | number> = {}
+    const normalizedDateOfBirth = dateOfBirthEditable.value?.toString() || profileForm.dateOfBirth
 
-    if (!surveyLocks.value.dateOfBirthLocked && profileForm.dateOfBirth) {
-      payload.dateOfBirth = profileForm.dateOfBirth
+    if (!surveyLocks.value.dateOfBirthLocked && normalizedDateOfBirth) {
+      payload.dateOfBirth = normalizedDateOfBirth
     }
 
     if (!surveyLocks.value.genreLocked && profileForm.genre) {
@@ -134,13 +159,21 @@ const saveProfile = async () => {
           v-if="user"
           class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
         >
-          <div>
-            <p class="text-sm text-gray-500">
-              Nombre completo
-            </p>
-            <p class="font-semibold">
-              {{ user.fullName }}
-            </p>
+          <div class="flex items-start gap-4">
+            <UAvatar
+                :src="user.imageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.fullName || 'User')}`"
+                :alt="user.fullName || 'User'"
+                size="xl"
+              />
+              <div>
+
+                <p class="text-sm text-gray-500">
+                  Nombre completo
+                </p>
+                <p class="font-semibold">
+                  {{ user.fullName }}
+                </p>
+              </div>
           </div>
           <div>
             <p class="text-sm text-gray-500">
@@ -179,18 +212,33 @@ const saveProfile = async () => {
               {{ allRequiredProfileCompleted ? 'Completo' : 'Pendiente' }}
             </UBadge>
           </div>
-
+          <div class="grid gap-4 md:grid-cols-2">
           <UFormField
             label="Fecha de nacimiento"
             name="dateOfBirth"
             :help="surveyLocks.dateOfBirthLocked ? 'Este campo está bloqueado.' : undefined"
           >
-            <UInput
-              v-model="profileForm.dateOfBirth"
-              type="date"
-              class="w-full"
-              :disabled="surveyLocks.dateOfBirthLocked"
-            />
+             <UInputDate ref="inputDate" v-model="dateOfBirthEditable" class="w-full" :disabled="surveyLocks.dateOfBirthLocked" :max-value="maxDateOfBirth">
+              <template #trailing>
+                <UPopover
+                  v-if="!surveyLocks.dateOfBirthLocked"
+                  :reference="inputDate?.inputsRef[3]?.$el"
+                >
+                  <UButton
+                    color="neutral"
+                    variant="link"
+                    size="sm"
+                    icon="lucide:calendar"
+                    aria-label="Select a date"
+                    class="px-0"
+                  />
+
+                  <template #content>
+                    <UCalendar v-model="dateOfBirthEditable" class="p-2" />
+                  </template>
+                </UPopover>
+              </template>
+            </UInputDate>
           </UFormField>
 
           <UFormField
@@ -220,6 +268,7 @@ const saveProfile = async () => {
               :disabled="surveyLocks.provinceLocked"
             />
           </UFormField>
+          </div>
 
           <div class="flex justify-end">
             <UButton
