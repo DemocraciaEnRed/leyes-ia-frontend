@@ -49,10 +49,11 @@ const handleLogin = async (event: FormSubmitEvent<Schema>) => {
     })
 
     await navigateTo(isLegislator.value ? '/cuenta/proyectos' : '/proyectos')
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const normalizedError = error as { data?: { message?: string }, message?: string }
     toast.add({
       title: 'Error de inicio de sesión',
-      description: error.data?.message || 'Credenciales inválidas',
+      description: normalizedError.data?.message || normalizedError.message || 'Credenciales inválidas',
       icon: 'lucide:alert-circle',
       color: 'error'
     })
@@ -76,6 +77,16 @@ const handleLogin = async (event: FormSubmitEvent<Schema>) => {
           :submit="{ label: 'Iniciar sesión', block: true, icon: 'lucide:log-in' }"
           @submit="handleLogin"
         />
+
+        <p class="mt-4 text-center text-sm text-toned">
+          ¿No tenés cuenta?
+          <NuxtLink
+            to="/auth/signup"
+            class="font-medium text-primary hover:underline"
+          >
+            Creá tu cuenta
+          </NuxtLink>
+        </p>
       </UPageCard>
     </UContainer>
   </NuxtLayout>

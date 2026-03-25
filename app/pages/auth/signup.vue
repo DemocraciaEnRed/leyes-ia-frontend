@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { CalendarDate, getLocalTimeZone, today } from '@internationalized/date'
 import * as z from 'zod'
 import type { FormSubmitEvent } from '@nuxt/ui'
 
@@ -39,11 +40,27 @@ const GENRE_OPTIONS = [
 ]
 
 const PROVINCE_OPTIONS = computed(() => {
-  return (provincesResponse.value?.provinces || []).map((province) => ({
+  return (provincesResponse.value?.provinces || []).map(province => ({
     label: province.name,
     value: province.id
   }))
 })
+
+const inputDate = useTemplateRef('inputDate')
+const dateOfBirthEditable = shallowRef<CalendarDate | null>(null)
+const maxDateOfBirth = today(getLocalTimeZone())
+
+const parseDateOfBirth = (value: string | undefined): CalendarDate | null => {
+  if (!value)
+    return null
+
+  const parts = value.split('-').map(Number)
+  if (parts.length !== 3 || !parts.every(part => Number.isFinite(part)))
+    return null
+
+  const [year, month, day] = parts as [number, number, number]
+  return new CalendarDate(year, month, day)
+}
 
 const formState = reactive<Partial<Schema>>({
   email: '',
@@ -55,6 +72,23 @@ const formState = reactive<Partial<Schema>>({
   provinceId: undefined,
   confirmPassword: ''
 })
+
+watch(dateOfBirthEditable, (value) => {
+  formState.dateOfBirth = value ? value.toString() : ''
+})
+
+watch(() => formState.dateOfBirth, (value) => {
+  const parsedValue = parseDateOfBirth(value)
+
+  if (!parsedValue && dateOfBirthEditable.value) {
+    dateOfBirthEditable.value = null
+    return
+  }
+
+  if (parsedValue && parsedValue.toString() !== dateOfBirthEditable.value?.toString()) {
+    dateOfBirthEditable.value = parsedValue
+  }
+}, { immediate: true })
 
 const handleSignup = async (event: FormSubmitEvent<Schema>) => {
   error.value = ''
@@ -80,8 +114,9 @@ const handleSignup = async (event: FormSubmitEvent<Schema>) => {
     })
 
     await navigateTo(isLegislator.value ? '/cuenta/proyectos' : '/proyectos')
-  } catch (err: any) {
-    error.value = err.data?.message || 'Error al crear la cuenta'
+  } catch (err: unknown) {
+    const normalizedError = err as { data?: { message?: string }, message?: string }
+    error.value = normalizedError.data?.message || normalizedError.message || 'Error al crear la cuenta'
     toast.add({
       title: 'Error al crear cuenta',
       description: error.value,
@@ -179,11 +214,33 @@ const handleSignup = async (event: FormSubmitEvent<Schema>) => {
                 label="Fecha de nacimiento"
                 name="dateOfBirth"
               >
-                <UInput
-                  v-model="formState.dateOfBirth"
-                  type="date"
+                <UInputDate
+                  ref="inputDate"
+                  v-model="dateOfBirthEditable"
                   class="w-full"
-                />
+                  :max-value="maxDateOfBirth"
+                >
+                  <template #trailing>
+                    <UPopover :reference="inputDate?.inputsRef[3]?.$el">
+                      <UButton
+                        color="neutral"
+                        variant="link"
+                        size="sm"
+                        icon="i-lucide-calendar"
+                        aria-label="Seleccionar fecha"
+                        class="px-0"
+                      />
+
+                      <template #content>
+                        <UCalendar
+                          v-model="dateOfBirthEditable"
+                          class="p-2"
+                          :max-value="maxDateOfBirth"
+                        />
+                      </template>
+                    </UPopover>
+                  </template>
+                </UInputDate>
               </UFormField>
 
               <UFormField
