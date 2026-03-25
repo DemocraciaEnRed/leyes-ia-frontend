@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { getLocalTimeZone, today } from '@internationalized/date'
+import type { CalendarDate } from '@internationalized/date'
+
 import ConfirmActionModal from '~/components/ConfirmActionModal.vue'
 import ProfileCompletionModal from '~/components/survey/ProfileCompletionModal.vue'
 
@@ -142,18 +145,45 @@ const eligibilityData = computed<SurveyEligibilityResponse | null>(() => runtime
 const hasOpenedProfileModal = ref(false)
 const submittingProfile = ref(false)
 const anonymousProfileReady = ref(false)
+const anonymousDateInput = useTemplateRef('anonymousDateInput')
+const anonymousDateOfBirth = shallowRef<CalendarDate | null>(null)
+const anonymousMaxDateOfBirth = today(getLocalTimeZone())
+
+const resolveAgeFromDateOfBirth = (dateOfBirth: CalendarDate | null): number | null => {
+  if (!dateOfBirth)
+    return null
+
+  const currentDate = today(getLocalTimeZone())
+  let age = currentDate.year - dateOfBirth.year
+
+  if (
+    currentDate.month < dateOfBirth.month
+    || (currentDate.month === dateOfBirth.month && currentDate.day < dateOfBirth.day)
+  ) {
+    age -= 1
+  }
+
+  if (!Number.isInteger(age) || age < 0)
+    return null
+
+  return age
+}
+
+const anonymousAge = computed(() => resolveAgeFromDateOfBirth(anonymousDateOfBirth.value))
 
 const anonymousRespondentData = reactive({
-  age: undefined as number | undefined,
   genre: '',
   provinceId: undefined as number | undefined
 })
 
 const canContinueAnonymous = computed(() => {
+  const resolvedAge = anonymousAge.value
+
   return Boolean(
-    anonymousRespondentData.age && anonymousRespondentData.age >= 14
-      && anonymousRespondentData.genre
-      && anonymousRespondentData.provinceId,
+    resolvedAge !== null
+    && resolvedAge >= 14
+    && anonymousRespondentData.genre
+    && anonymousRespondentData.provinceId
   )
 })
 
@@ -311,7 +341,16 @@ const submitSurvey = async (answers: Record<number, SurveyAnswerValue>) => {
   }
 
   if (eligibilityData.value?.mode === 'anonymous') {
-    payload.age = anonymousRespondentData.age
+    if (anonymousAge.value === null || anonymousAge.value < 14) {
+      toast.add({
+        title: 'Fecha de nacimiento inválida',
+        description: 'Debés tener al menos 14 años para responder esta encuesta.',
+        color: 'warning'
+      })
+      return
+    }
+
+    payload.age = anonymousAge.value
     payload.genre = anonymousRespondentData.genre
     payload.provinceId = anonymousRespondentData.provinceId
   }
@@ -504,18 +543,37 @@ const handleLogoClick = async () => {
         </h1>
 
         <UFormField
-          label="Edad"
-          name="anonymousAge"
+          label="Fecha de nacimiento"
+          name="anonymousDateOfBirth"
           help="Debés tener al menos 14 años para responder esta encuesta."
         >
-          <UInput
-            v-model.number="anonymousRespondentData.age"
-            type="number"
-            min="14"
-            step="1"
+          <UInputDate
+            ref="anonymousDateInput"
+            v-model="anonymousDateOfBirth"
             class="w-full"
-            placeholder="Ingresá tu edad"
-          />
+            :max-value="anonymousMaxDateOfBirth"
+          >
+            <template #trailing>
+              <UPopover :reference="anonymousDateInput?.inputsRef[3]?.$el">
+                <UButton
+                  color="neutral"
+                  variant="link"
+                  size="sm"
+                  icon="i-lucide-calendar"
+                  aria-label="Seleccionar fecha"
+                  class="px-0"
+                />
+
+                <template #content>
+                  <UCalendar
+                    v-model="anonymousDateOfBirth"
+                    class="p-2"
+                    :max-value="anonymousMaxDateOfBirth"
+                  />
+                </template>
+              </UPopover>
+            </template>
+          </UInputDate>
         </UFormField>
 
         <UFormField

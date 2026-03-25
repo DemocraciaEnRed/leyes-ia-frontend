@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { CalendarDate, getLocalTimeZone, today } from '@internationalized/date'
+
 const props = withDefaults(defineProps<{
   initialData?: {
     dateOfBirth?: string | null
@@ -26,6 +28,10 @@ const GENRE_OPTIONS = [
   { label: 'Prefiero no decirlo', value: 'prefiero_no_decir' }
 ]
 
+const inputDate = useTemplateRef('inputDate')
+const dateOfBirthEditable = shallowRef<CalendarDate | null>(null)
+const maxDateOfBirth = today(getLocalTimeZone())
+
 const form = reactive({
   dateOfBirth: props.initialData?.dateOfBirth || '',
   genre: props.initialData?.genre || '',
@@ -34,11 +40,28 @@ const form = reactive({
 
 const formError = ref('')
 
+const parseDateOfBirth = (value: string | null | undefined): CalendarDate | null => {
+  if (!value)
+    return null
+
+  const parts = value.split('-').map(Number)
+  if (parts.length !== 3 || !parts.every(part => Number.isFinite(part)))
+    return null
+
+  const [year, month, day] = parts as [number, number, number]
+  return new CalendarDate(year, month, day)
+}
+
 watch(() => props.initialData, (value) => {
   form.dateOfBirth = value?.dateOfBirth || ''
   form.genre = value?.genre || ''
   form.provinceId = value?.provinceId ?? undefined
+  dateOfBirthEditable.value = parseDateOfBirth(value?.dateOfBirth)
 }, { deep: true })
+
+watch(dateOfBirthEditable, (value) => {
+  form.dateOfBirth = value ? value.toString() : ''
+})
 
 const canSubmit = computed(() => {
   return Boolean(form.dateOfBirth && form.genre && form.provinceId)
@@ -85,11 +108,33 @@ const handleCancel = () => {
           label="Fecha de nacimiento"
           name="dateOfBirth"
         >
-          <UInput
-            v-model="form.dateOfBirth"
-            type="date"
+          <UInputDate
+            ref="inputDate"
+            v-model="dateOfBirthEditable"
             class="w-full"
-          />
+            :max-value="maxDateOfBirth"
+          >
+            <template #trailing>
+              <UPopover :reference="inputDate?.inputsRef[3]?.$el">
+                <UButton
+                  color="neutral"
+                  variant="link"
+                  size="sm"
+                  icon="i-lucide-calendar"
+                  aria-label="Seleccionar fecha"
+                  class="px-0"
+                />
+
+                <template #content>
+                  <UCalendar
+                    v-model="dateOfBirthEditable"
+                    class="p-2"
+                    :max-value="maxDateOfBirth"
+                  />
+                </template>
+              </UPopover>
+            </template>
+          </UInputDate>
         </UFormField>
 
         <UFormField
