@@ -85,7 +85,6 @@ const getAuthors = (project: PublishedProject) => {
           }"
           :date="project.publishedAt"
           :authors="getAuthors(project)"
-          :image="PLACEHOLDER_COVER_URL"
           :to="`/proyectos/${project.slug}`"
           orientation="horizontal"
           variant="subtle"

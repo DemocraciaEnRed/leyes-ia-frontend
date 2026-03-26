@@ -81,8 +81,8 @@ const categorias = getCategorias()
         />
       </template>
       <template #description>
-        <p class="text-white text-md md:text-xl font-semibold sm:max-w-1/2">
-          La primera plataforma para integrar ciudadanía y legisladores para construir una argentina mejor
+        <p class="text-white text-md md:text-2xl font-semibold sm:max-w-1/2">
+           la política tiene futuro solo si te involucras
         </p>
       </template>
     </UPageHero>

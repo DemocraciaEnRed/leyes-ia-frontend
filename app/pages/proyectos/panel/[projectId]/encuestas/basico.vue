@@ -201,15 +201,16 @@ const saveQuestionEdit = (index, payload) => {
 <template>
   <NuxtLayout name="panel-proyecto">
     <UPageHeader
-      title="Crear encuesta base"
-      description="Utilizá la inteligencia artificial para generar automáticamente una encuesta básica con preguntas relevantes y bien estructuradas. Esta herramienta es ideal para obtener rápidamente feedback de los ciudadanos sobre el proyecto de ley, sin necesidad de diseñar la encuesta desde cero."
+      title="Crear encuesta para explorar acuerdos y desacuerdos"
+      description="Usá inteligencia artificial para generar en un solo click una encuesta ideal para relevar rápidamente la opinión de la ciudadanía sobre el proyecto de ley."
     />
     <UPageBody>
       <div
         v-if="!alreadyContentGenerated"
         class="space-y-5"
       >
-        <p>Utilizando un prompt testeado, se generará una encuesta básica con preguntas relevantes y bien estructuradas.</p>
+        <p>Las preguntas están pensadas para invitar a la reflexión, abordar los puntos principales del proyecto y ayudar a identificar acuerdos, desacuerdos y tensiones en la opinión pública.</p>
+        <p>Las respuestas son simples: <UBadge label="Sí" variant="outline" size="sm" /> <UBadge label="No" variant="outline" size="sm" /> <UBadge label="No sé" variant="outline" size="sm" /> , lo que facilita la participación y permite que más personas puedan expresar su opinión.</p>
         <UPageCard
           variant="outline"
           class="bg-elevated"

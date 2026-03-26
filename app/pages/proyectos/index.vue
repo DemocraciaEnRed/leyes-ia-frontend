@@ -257,7 +257,6 @@ const clearCategoryFromDrawer = async () => {
           :badge="project.category || 'Sin categoría'"
           :date="project.publishedAt"
           :authors="getAuthors(project)"
-          :image="PLACEHOLDER_COVER_URL"
           :to="`/proyectos/${project.slug}`"
           :ui="{
             title: 'font-title font-bold',
