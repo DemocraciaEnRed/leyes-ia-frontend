@@ -161,17 +161,22 @@ const availableSurveys = computed(() => availableSurveysResponse.value?.surveys 
 			/>
 
 			<template v-else>
+				<UBanner
+					color="info"
+					icon="i-lucide-info"
+					title="Usamos IA únicamente para generar resúmenes, explicaciones y herramientas de participación que faciliten la lectura. El texto del proyecto de ley se publica tal como fue presentado y no es modificado por la plataforma."
+				/>
 				<ProjectDetailSummarySection :summary="summary" />
-				<USeparator icon="lucide:sparkles" class="my-2" />
-				<ProjectDetailFeatureGrid :content="normalizedContent" />
-				<USeparator icon="lucide:messages-square" class="my-2" />
-				<ProjectDetailQuestionsSection :questions="proposedQuestions" />
 				<USeparator icon="lucide:chart-no-axes-column" class="my-2" />
 				<ProjectDetailSurveysSection
 					:project-slug="projectSlug"
 					:featured-survey="featuredSurvey"
 					:surveys="availableSurveys"
 				/>
+				<USeparator icon="lucide:sparkles" class="my-2" />
+				<ProjectDetailFeatureGrid :content="normalizedContent" />
+				<USeparator icon="lucide:messages-square" class="my-2" />
+				<ProjectDetailQuestionsSection :questions="proposedQuestions" />
 				<USeparator icon="lucide:megaphone" class="my-2" />
 				<ProjectDetailCTA :project-title="projectTitle" />
 			</template>

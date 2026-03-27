@@ -53,6 +53,9 @@
             </NuxtLink>
           </p>
         </div>
+        <p class="max-w-3xl text-center text-xs text-muted">
+          Usamos IA solo para generar resúmenes, explicaciones y herramientas de participación. Los proyectos de ley se publican tal como fueron presentados, sin modificaciones.
+        </p>
       </div>
     </UFooter>
   </div>

@@ -29,11 +29,28 @@ if (!loggedIn.value) {
 
 const categorias = getCategorias()
 
+
+  const bannerActions = ref([{
+    label: 'Conocé mas',
+    trailingIcon: 'lucide:external-link',
+    variant: 'outline',
+    href: 'https://blog.democraciaenred.org/democracia-ia-c%C3%B3mo-puede-la-inteligencia-artificial-fortalecer-la-participaci%C3%B3n-ciudadana/',
+    target: '_blank'
+  }])
 </script>
 
 <template>
   <NuxtLayout name="home">
 
+    <UBanner
+      icon="i-lucide-construction"
+      title="Este prototipo esta en desarrollo"
+      :actions="bannerActions"
+      close
+      :ui="{
+        root: 'z-0'
+      }"
+    />
     <UPageHero
       :links="pageHeroLinks"
       orientation="vertical"
@@ -76,7 +93,7 @@ const categorias = getCategorias()
       </template>
       <template #title>
         <AppLogo
-          class="h-10 sm:h-12 md:h-15 w-auto mr-auto my-4"
+          class="h-10 sm:h-13 md:h-18 w-auto mr-auto my-4"
           current-color="#FFFFFF"
         />
       </template>
@@ -204,16 +221,6 @@ const categorias = getCategorias()
       headline="🤔"
       :ui="{
         headline: 'text-5xl'
-      }"
-    /> -->
-
-    <!-- <UBanner
-      icon="i-lucide-construction"
-      title="Este prototipo esta en desarrollo"
-      :actions="bannerActions"
-      close
-      :ui="{
-        root: 'z-0'
       }"
     /> -->
     <UContainer class="text-center">
