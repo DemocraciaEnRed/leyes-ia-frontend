@@ -3,8 +3,8 @@ import { useRoute, useRouter } from 'vue-router'
 
 const route = useRoute()
 const router = useRouter()
-
 const PLACEHOLDER_COVER_URL = 'https://placehold.co/1200x630?text=Proyecto+de+Ley'
+const ITEMS_PER_PAGE = 3
 
 const categorias = getCategorias()
 const categoryDrawerOpen = ref(false)
@@ -36,6 +36,39 @@ const categoryFilterButtonLabel = computed(() => {
   return 'Todas las categorías'
 })
 
+const currentPage = computed({
+  get: () => {
+    const rawValue = route.query.page
+    const parsed = Number.parseInt(Array.isArray(rawValue) ? rawValue[0] : rawValue, 10)
+
+    if (Number.isNaN(parsed) || parsed < 1) {
+      return 1
+    }
+
+    return parsed
+  },
+  set: (nextPage) => {
+    const normalizedPage = Number.parseInt(String(nextPage), 10)
+
+    if (Number.isNaN(normalizedPage) || normalizedPage < 1) {
+      return
+    }
+
+    const nextQuery = { ...route.query }
+
+    if (normalizedPage === 1) {
+      delete nextQuery.page
+    } else {
+      nextQuery.page = String(normalizedPage)
+    }
+
+    router.push({
+      path: '/proyectos',
+      query: nextQuery
+    })
+  }
+})
+
 const desktopCategory = computed({
   get: () => selectedCategoryLabel.value,
   set: (value) => {
@@ -55,21 +88,38 @@ const desktopCategory = computed({
 })
 
 const queryParams = computed(() => {
+  const baseParams = {
+    limit: ITEMS_PER_PAGE,
+    page: currentPage.value
+  }
+
   if (categorySelected.value === undefined) {
-    return { limit: 5 }
+    return baseParams
   }
 
   return {
+    ...baseParams,
     category: categorySelected.value
   }
 })
 
 const { data: dataResponse, pending, error, refresh } = await useFetch('/api/backend/hub/projects', {
   query: queryParams,
-  watch: [categorySelected]
+  watch: [categorySelected, currentPage]
 })
 
 const projects = computed(() => dataResponse.value?.projects ?? [])
+const totalItems = computed(() => {
+  if (typeof dataResponse.value?.total === 'number') {
+    return dataResponse.value.total
+  }
+
+  return projects.value.length
+})
+
+const shouldShowPagination = computed(() => {
+  return !pending.value && !error.value && totalItems.value > ITEMS_PER_PAGE
+})
 
 const getAuthors = (project) => {
   if (!project.authorFullname) {
@@ -102,6 +152,8 @@ const toggleCategory = async (categoryIndex) => {
     nextQuery.categoria = String(categoryIndex)
   }
 
+  delete nextQuery.page
+
   await router.push({
     path: '/proyectos',
     query: nextQuery
@@ -112,6 +164,7 @@ const clearCategory = async () => {
   const nextQuery = { ...route.query }
 
   delete nextQuery.categoria
+  delete nextQuery.page
 
   await router.push({
     path: '/proyectos',
@@ -266,6 +319,19 @@ const clearCategoryFromDrawer = async () => {
           variant="subtle"
         />
       </UBlogPosts>
+
+      <div
+        v-if="shouldShowPagination"
+        class="mt-8 flex justify-center"
+      >
+        <UPagination
+          v-model:page="currentPage"
+          :total="totalItems"
+          :items-per-page="ITEMS_PER_PAGE"
+          :sibling-count="1"
+          show-edges
+        />
+      </div>
     </UContainer>
   </NuxtLayout>
 </template>
