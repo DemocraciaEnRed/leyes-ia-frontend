@@ -18,6 +18,16 @@ export default defineAppConfig({
         base: 'my-5'
       }
     },
+    pageHeader: {
+      slots: {
+        title: 'font-title'
+      }
+    },
+    pageHero: {
+      slots: {
+        title: 'font-title'
+      }
+    },
     editor: {
       slots: {
         base: [

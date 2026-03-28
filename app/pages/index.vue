@@ -43,6 +43,7 @@ const categorias = getCategorias()
   <NuxtLayout name="home">
 
     <UBanner
+      id="home-aviso-prototipo"
       icon="i-lucide-construction"
       title="Este prototipo esta en desarrollo"
       :actions="bannerActions"
