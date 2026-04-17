@@ -134,6 +134,18 @@ const recentSeries = computed(() => (usage.value?.timeSeries?.buckets || []).sli
       class="mb-8"
     />
 
+    <!-- Admin navigation -->
+    <div class="mb-8 flex flex-wrap gap-3">
+      <UButton
+        to="/admin/legisladores"
+        icon="i-lucide-landmark"
+        color="neutral"
+        variant="subtle"
+      >
+        Legisladores
+      </UButton>
+    </div>
+
     <UAlert
       v-if="errorMessage"
       color="error"
