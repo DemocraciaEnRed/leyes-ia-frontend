@@ -37,7 +37,7 @@ const items = ref<NavigationMenuItem[]>([
       label: 'Componentes',
       icon: 'lucide:layout-dashboard',
       defaultOpen: true,
-      active: route.path.includes('/resumen') || route.path.includes('/encuestas') || route.path.includes('/comentarios') || route.path.includes('/chats'),
+      active: route.path.includes('/resumen') || route.path.includes('/encuestas') || route.path.includes('/comentarios') || route.path.includes('/chats') || route.path.includes('/citas-legisladores'),
       children: [
         {
           label: 'Resumen',
@@ -50,6 +50,12 @@ const items = ref<NavigationMenuItem[]>([
           icon: 'lucide:clipboard-list',
           to: `/proyectos/panel/${projectId}/encuestas`,
           active: route.path.includes('/encuestas')
+        },
+        {
+          label: 'Citas de Legisladores',
+          icon: 'lucide:quote',
+          to: `/proyectos/panel/${projectId}/citas-legisladores`,
+          active: route.path.includes('/citas-legisladores')
         },
         {
           label: 'Comentarios',

@@ -177,6 +177,8 @@ const availableSurveys = computed(() => availableSurveysResponse.value?.surveys 
 				<ProjectDetailFeatureGrid :content="normalizedContent" />
 				<USeparator icon="lucide:messages-square" class="my-2" />
 				<ProjectDetailQuestionsSection :questions="proposedQuestions" />
+				<USeparator icon="lucide:quote" class="my-2" />
+				<ProjectDetailLegislatorQuotesSection :project-slug="projectSlug" />
 				<USeparator icon="lucide:megaphone" class="my-2" />
 				<ProjectDetailCTA :project-title="projectTitle" />
 			</template>
