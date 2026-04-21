@@ -179,7 +179,7 @@ const availableSurveys = computed(() => availableSurveysResponse.value?.surveys 
 				<USeparator icon="lucide:quote" class="my-2" />
 				<ProjectDetailLegislatorQuotesSection :project-slug="projectSlug" />
 				<USeparator icon="lucide:vote" class="my-2" />
-				<ProjectDetailVotePredictionsSection :project-slug="projectSlug" />
+				<ProjectDetailVotePredictionsSectionV2 :project-slug="projectSlug" />
 				<USeparator icon="lucide:landmark" class="my-2" />
 				<ProjectDetailVoteResultsSection :project-slug="projectSlug" />
 				<USeparator icon="lucide:megaphone" class="my-2" />
