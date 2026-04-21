@@ -26,3 +26,7 @@ logs
 # Needed for dockerfile builds
 !.env.production
 !.env.staging
+
+# Vercel Labs Skills CLI
+.agents/skills/*
+

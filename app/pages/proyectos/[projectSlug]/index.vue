@@ -130,13 +130,13 @@ const availableSurveys = computed(() => availableSurveysResponse.value?.surveys 
 			:project="project"
 		/>
 		<div class="bg-accented">
-			<div class="container max-w-5xl mx-auto px-4 py-4 flex items-start gap-4">
+			<div class="container max-w-7xl mx-auto px-4 py-4 flex items-start gap-4">
 				<UIcon name="lucide:info" class="size-10"/>
 				<p class="text-sm">Usamos IA únicamente para generar resúmenes, explicaciones y herramientas de participación que faciliten la lectura. El texto del proyecto de ley se publica tal como fue presentado y no es modificado por la plataforma.</p>
 			</div>
 		</div>
 					
-		<UContainer class="max-w-5xl py-10 space-y-8">
+		<UContainer class="w-full py-10 space-y-2">
 			<UProgress v-if="status === 'pending'" indeterminate class="my-4" />
 
 			<UAlert
