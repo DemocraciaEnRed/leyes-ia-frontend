@@ -7,18 +7,21 @@ FROM node:${NODE_VERSION}-slim AS build
 # Set the working directory inside the container
 WORKDIR /app
 
-# Copy package.json and package-lock.json files to the working directory
+# Copy dependency manifests to leverage Docker layer caching
 COPY ./package.json /app/
-COPY ./package-lock.json /app/
+COPY ./pnpm-lock.yaml /app/
+COPY ./.npmrc /app/
 
-# Install dependencies
-RUN npm ci
+# Install dependencies with the pinned pnpm version
+RUN corepack enable \
+	&& corepack prepare pnpm@10.23.0 --activate \
+	&& pnpm install --frozen-lockfile
 
 # Copy the rest of the application files to the working directory
 COPY . ./
 
 # Build the application
-RUN npm run build-staging
+RUN pnpm run build-staging
 
 # Create a new stage for the production image
 FROM node:${NODE_VERSION}-slim
