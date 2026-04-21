@@ -13,8 +13,7 @@ COPY ./pnpm-lock.yaml /app/
 COPY ./.npmrc /app/
 
 # Install dependencies with the pinned pnpm version
-RUN corepack enable \
-	&& corepack prepare pnpm@10.23.0 --activate \
+RUN npm install -g pnpm@10.23.0 \
 	&& pnpm install --frozen-lockfile
 
 # Copy the rest of the application files to the working directory
