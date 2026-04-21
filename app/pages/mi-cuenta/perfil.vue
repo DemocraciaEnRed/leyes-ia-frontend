@@ -2,11 +2,9 @@
 import { CalendarDate, today, getLocalTimeZone } from '@internationalized/date'
 
 definePageMeta({
+  layout: 'panel-mi-cuenta',
   middleware: 'auth'
 })
-
-const toast = useToast()
-const { user, refreshSession } = useAuth()
 const inputDate = useTemplateRef('inputDate')
 
 const GENRE_OPTIONS = [
@@ -148,7 +146,6 @@ const saveProfile = async () => {
 </script>
 
 <template>
-  <NuxtLayout name="panel-mi-cuenta">
     <UPageHeader
       title="Mi Perfil"
       :description="`Gestiona tu información personal, ${user?.firstName}`"
@@ -283,5 +280,4 @@ const saveProfile = async () => {
         </div>
       </UCard>
     </UPageBody>
-  </NuxtLayout>
 </template>

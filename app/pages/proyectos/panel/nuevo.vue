@@ -2,9 +2,9 @@
 import slugify from 'slugify'
 
 definePageMeta({
+  layout: 'panel-legislador',
   middleware: 'legislator'
 })
-const { reactive, watch, ref, computed } = await import('vue')
 const runtimeConfig = useRuntimeConfig()
 const toast = useToast()
 
@@ -120,7 +120,6 @@ const creationModes = ref([
 </script>
 
 <template>
-  <NuxtLayout name="panel-legislador">
     <UPage>
       <UPageHeader
         title="Nuevo hub de proyecto"
@@ -216,5 +215,4 @@ const creationModes = ref([
         </UPageCard>
       </UPageBody>
     </UPage>
-  </NuxtLayout>
 </template>

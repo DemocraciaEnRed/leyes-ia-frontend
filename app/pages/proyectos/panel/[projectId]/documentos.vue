@@ -2,7 +2,7 @@
 const runtimeConfig = useRuntimeConfig()
 
 definePageMeta({
-  layout: 'workspace',
+  layout: 'panel-proyecto',
   middleware: 'auth'
 })
 const route = useRoute()
@@ -12,7 +12,6 @@ const { data: dataResponse, pending, error, refresh } = await useFetch(`/api/bac
 </script>
 
 <template>
-  <NuxtLayout name="panel-proyecto">
     <UPageHeader
       :title="`${dataResponse?.project.name || 'Cargando...'} `"
       headline="Documentos"
@@ -27,5 +26,4 @@ const { data: dataResponse, pending, error, refresh } = await useFetch(`/api/bac
         </div>
       </UPageCard>
     </UPageBody>
-  </NuxtLayout>
 </template>

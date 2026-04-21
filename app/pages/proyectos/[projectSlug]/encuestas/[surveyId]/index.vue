@@ -2,6 +2,10 @@
 import { getLocalTimeZone, today } from '@internationalized/date'
 import type { CalendarDate } from '@internationalized/date'
 
+definePageMeta({
+  layout: 'encuesta'
+})
+
 import ConfirmActionModal from '~/components/ConfirmActionModal.vue'
 import ProfileCompletionModal from '~/components/survey/ProfileCompletionModal.vue'
 
@@ -399,7 +403,6 @@ const handleLogoClick = async () => {
 </script>
 
 <template>
-  <NuxtLayout name="encuesta">
     <button
       type="button"
       class="absolute left-4 top-0 cursor-pointer"
@@ -625,5 +628,4 @@ const handleLogoClick = async () => {
       :completion-project-href="projectDetailHref"
       :submit-action="submitSurvey"
     />
-  </NuxtLayout>
 </template>

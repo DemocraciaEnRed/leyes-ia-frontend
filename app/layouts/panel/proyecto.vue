@@ -37,7 +37,7 @@ const items = ref<NavigationMenuItem[]>([
       label: 'Componentes',
       icon: 'lucide:layout-dashboard',
       defaultOpen: true,
-      active: route.path.includes('/resumen') || route.path.includes('/encuestas') || route.path.includes('/comentarios') || route.path.includes('/chats') || route.path.includes('/citas-legisladores'),
+      active: route.path.includes('/resumen') || route.path.includes('/encuestas') || route.path.includes('/comentarios') || route.path.includes('/chats') || route.path.includes('/citas-legisladores') || route.path.includes('/prediccion-votaciones'),
       children: [
         {
           label: 'Resumen',
@@ -56,6 +56,12 @@ const items = ref<NavigationMenuItem[]>([
           icon: 'lucide:quote',
           to: `/proyectos/panel/${projectId}/citas-legisladores`,
           active: route.path.includes('/citas-legisladores')
+        },
+        {
+          label: 'Predicción de Votaciones',
+          icon: 'lucide:vote',
+          to: `/proyectos/panel/${projectId}/prediccion-votaciones`,
+          active: route.path.includes('/prediccion-votaciones')
         },
         {
           label: 'Comentarios',
@@ -125,6 +131,8 @@ watch(publicProjectPath, (nextPath) => {
     projectLinks[1].to = nextPath
   }
 }, { immediate: true })
+
+const sidebarOpen = ref(true)
 </script>
 
 <template>
@@ -133,47 +141,38 @@ watch(publicProjectPath, (nextPath) => {
     <ProfileCompletionBanner />
     <UMain>
       <div class="lg:hidden border-b border-default">
-        <UCollapsible
-          class="flex flex-col"
-          :unmount-on-hide="true"
-        >
-          <UButton
-            class="group cursor-pointer py-2 rounded-none"
-            label="Menú"
-            icon="lucide:menu"
-            color="neutral"
-            variant="soft"
-            trailing-icon="i-lucide-chevron-down"
-            :ui="{ trailingIcon: 'group-data-[state=open]:rotate-180 transition-transform duration-200' }"
-            block
-          />
-
-          <template #content>
-            <UNavigationMenu
-              :items="items"
-              orientation="vertical"
-              color="neutral"
-              :highlight="true"
-              class="py-2 px-4 border-t border-default"
-            />
-          </template>
-        </UCollapsible>
+        <UButton
+          class="cursor-pointer py-2 rounded-none"
+          label="Menú"
+          icon="lucide:menu"
+          color="neutral"
+          variant="soft"
+          block
+          @click="sidebarOpen = true"
+        />
       </div>
-      <UContainer>
-        <UPage>
-          <template #left>
-            <UPageAside>
-              <UNavigationMenu
-                :items="items"
-                orientation="vertical"
-                color="neutral"
-                :highlight="true"
-              />
-            </UPageAside>
-          </template>
-          <slot />
-        </UPage>
-      </UContainer>
+      <div class="flex">
+        <USidebar
+          v-model:open="sidebarOpen"
+          collapsible="offcanvas"
+          mode="drawer"
+          :ui="{
+            container: 'top-(--ui-header-height) h-[calc(100svh-var(--ui-header-height))]'
+          }"
+        >
+          <UNavigationMenu
+            :items="items"
+            orientation="vertical"
+            color="neutral"
+            :highlight="true"
+          />
+        </USidebar>
+        <div class="flex-1 min-w-0">
+          <UContainer>
+            <slot />
+          </UContainer>
+        </div>
+      </div>
     </UMain>
     <AppFooter />
   </div>

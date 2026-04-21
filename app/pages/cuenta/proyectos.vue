@@ -2,6 +2,7 @@
 const { user, isLegislator } = useAuth()
 
 definePageMeta({
+  layout: 'panel-legislador',
   middleware: 'auth'
 })
 
@@ -83,7 +84,6 @@ const emptyActions = computed(() => {
 </script>
 
 <template>
-  <NuxtLayout name="panel-legislador">
     <UPageHeader
       title="Mis proyectos"
       :links="links"
@@ -199,5 +199,4 @@ const emptyActions = computed(() => {
                 </UButton>
             </div> -->
     </UPageBody>
-  </NuxtLayout>
 </template>

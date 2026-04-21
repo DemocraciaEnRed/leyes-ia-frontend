@@ -130,7 +130,6 @@ const handleSignup = async (event: FormSubmitEvent<Schema>) => {
 </script>
 
 <template>
-  <NuxtLayout name="default">
     <UContainer>
       <UPageCard
         class="w-full max-w-2xl mx-auto mt-20"
@@ -308,5 +307,4 @@ const handleSignup = async (event: FormSubmitEvent<Schema>) => {
         </UForm>
       </UPageCard>
     </UContainer>
-  </NuxtLayout>
 </template>

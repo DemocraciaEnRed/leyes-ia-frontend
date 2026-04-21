@@ -7,7 +7,8 @@ export default defineNuxtConfig({
     '@nuxt/icon',
     'nuxt-auth-utils',
     'nuxt-charts',
-    'nuxt-gtag'
+    'nuxt-gtag',
+    '@vueuse/nuxt'
   ],
 
   devtools: {

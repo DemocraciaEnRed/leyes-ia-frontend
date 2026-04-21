@@ -4,7 +4,7 @@ import type { FormSubmitEvent } from '@nuxt/ui'
 import type { LegislatorDetailResponse } from '~/shared/types/legislator'
 
 definePageMeta({
-  layout: 'default',
+  layout: 'panel-admin',
   middleware: 'admin'
 })
 

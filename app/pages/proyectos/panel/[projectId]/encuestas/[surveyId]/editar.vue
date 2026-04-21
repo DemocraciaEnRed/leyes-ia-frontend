@@ -3,11 +3,9 @@ import ConfirmActionModal from '~/components/ConfirmActionModal.vue'
 import { CalendarDate, Time } from '@internationalized/date'
 
 definePageMeta({
+  layout: 'panel-proyecto',
   middleware: 'auth'
 })
-
-const overlay = useOverlay()
-const confirmDeleteModal = overlay.create(ConfirmActionModal)
 const toast = useToast()
 const route = useRoute()
 const projectId = route.params.projectId
@@ -230,7 +228,6 @@ const saveSurvey = async () => {
 </script>
 
 <template>
-  <NuxtLayout name="panel-proyecto">
     <UPageHeader
       title="Editar encuesta"
       headline="Encuestas"
@@ -389,5 +386,4 @@ const saveSurvey = async () => {
         Guardar cambios
       </UButton>
     </UPageBody>
-  </NuxtLayout>
 </template>

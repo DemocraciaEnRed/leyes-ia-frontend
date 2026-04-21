@@ -184,7 +184,6 @@ const clearCategoryFromDrawer = async () => {
 </script>
 
 <template>
-  <NuxtLayout name="default">
     <UPageHero
       title="Proyectos"
       :ui="{
@@ -333,5 +332,4 @@ const clearCategoryFromDrawer = async () => {
         />
       </div>
     </UContainer>
-  </NuxtLayout>
 </template>

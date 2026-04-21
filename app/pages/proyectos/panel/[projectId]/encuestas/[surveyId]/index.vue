@@ -1,6 +1,6 @@
 <script setup>
 definePageMeta({
-  layout: 'workspace'
+  layout: 'panel-proyecto'
 })
 const route = useRoute()
 const projectId = route.params.projectId
@@ -88,7 +88,6 @@ const clearFeaturedSurvey = async () => {
 </script>
 
 <template>
-  <NuxtLayout name="panel-proyecto">
     <UPageHeader
       title="Ver detalles"
       headline="Encuestas"
@@ -307,5 +306,4 @@ const clearFeaturedSurvey = async () => {
         :can-delete="false"
       />
     </UPageBody>
-  </NuxtLayout>
 </template>

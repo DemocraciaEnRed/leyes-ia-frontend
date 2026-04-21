@@ -24,7 +24,7 @@
             />
           </a>
           <UIcon name="lucide:plus" class="mx-2" :size="24" />
-          <a href="https://phi.com">
+          <a href="https://fundacionphilosophia.org">
             <!-- PHI Logo for light mode -->
             <img
               src="/phi-logo-dark.png"

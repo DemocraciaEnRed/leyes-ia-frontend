@@ -118,7 +118,6 @@ const pageHeaderLinks = computed(() => {
 </script>
 
 <template>
-  <NuxtLayout name="default">
     <UContainer>
       <UPage>
         <UPageHeader
@@ -191,5 +190,4 @@ const pageHeaderLinks = computed(() => {
         </UPageBody>
       </UPage>
     </UContainer>
-  </NuxtLayout>
 </template>

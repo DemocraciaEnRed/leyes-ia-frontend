@@ -37,6 +37,8 @@ useSeoMeta({
       class="z-100"
       color="neutral"
     />
-    <NuxtPage />
+    <NuxtLayout>
+      <NuxtPage />
+    </NuxtLayout>
   </UApp>
 </template>

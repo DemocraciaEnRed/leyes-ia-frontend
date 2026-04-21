@@ -1,11 +1,34 @@
 <script setup lang="ts">
 import { h, resolveComponent } from 'vue'
 import type { DropdownMenuItem } from '@nuxt/ui'
-import type { LegislatorListResponse, Legislator } from '~/shared/types/legislator'
 import ConfirmActionModal from '~/components/ConfirmActionModal.vue'
 
+interface Province {
+  id: number
+  name: string
+}
+
+interface Legislator {
+  id: number
+  fullName: string
+  chamber: 'deputies' | 'senators'
+  province?: Province
+  blockName?: string
+  active: boolean
+}
+
+interface LegislatorListResponse {
+  legislators: Legislator[]
+  pagination: {
+    page: number
+    limit: number
+    total: number
+    totalPages: number
+  }
+}
+
 definePageMeta({
-  layout: 'default',
+  layout: 'panel-admin',
   middleware: 'admin'
 })
 

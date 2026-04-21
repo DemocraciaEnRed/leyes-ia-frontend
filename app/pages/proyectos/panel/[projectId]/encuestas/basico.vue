@@ -2,10 +2,9 @@
 import { CalendarDate, Time } from '@internationalized/date'
 
 definePageMeta({
+  layout: 'panel-proyecto',
   middleware: 'auth'
 })
-
-const toast = useToast()
 const route = useRoute()
 const projectId = route.params.projectId
 
@@ -199,7 +198,6 @@ const saveQuestionEdit = (index, payload) => {
 </script>
 
 <template>
-  <NuxtLayout name="panel-proyecto">
     <UPageHeader
       title="Crear encuesta para explorar acuerdos y desacuerdos"
       description="Usá inteligencia artificial para generar en un solo click una encuesta ideal para relevar rápidamente la opinión de la ciudadanía sobre el proyecto de ley."
@@ -377,5 +375,4 @@ const saveQuestionEdit = (index, payload) => {
         Guardar encuesta
       </UButton>
     </UPageBody>
-  </NuxtLayout>
 </template>

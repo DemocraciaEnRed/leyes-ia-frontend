@@ -3,7 +3,6 @@
 </script>
 
 <template>
-  <NuxtLayout name="default">
     <UContainer>
       <UPage>
         <UPageHeader
@@ -17,5 +16,4 @@
         </UPageBody>
       </UPage>
     </UContainer>
-  </NuxtLayout>
 </template>

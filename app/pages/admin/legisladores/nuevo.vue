@@ -3,7 +3,7 @@ import * as z from 'zod'
 import type { FormSubmitEvent } from '@nuxt/ui'
 
 definePageMeta({
-  layout: 'default',
+  layout: 'panel-admin',
   middleware: 'admin'
 })
 

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 definePageMeta({
-  layout: 'default',
+  layout: 'panel-admin',
   middleware: 'admin'
 })
 
@@ -143,6 +143,14 @@ const recentSeries = computed(() => (usage.value?.timeSeries?.buckets || []).sli
         variant="subtle"
       >
         Legisladores
+      </UButton>
+      <UButton
+        to="/admin/partidos-politicos"
+        icon="i-lucide-building-2"
+        color="neutral"
+        variant="subtle"
+      >
+        Partidos Políticos
       </UButton>
     </div>
 

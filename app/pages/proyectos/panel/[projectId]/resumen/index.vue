@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 
 definePageMeta({
-  layout: 'workspace',
+  layout: 'panel-proyecto',
   middleware: 'auth'
 })
 const route = useRoute()
@@ -32,7 +32,6 @@ const links = computed(() => {
 </script>
 
 <template>
-  <NuxtLayout name="panel-proyecto">
     <UPageHeader
       title="Resumen del proyecto"
       description="Los siguientes bloques contienen la información principal de tu proyecto de ley. Esta información es la que se mostrará a los usuarios en el sitio web, por lo que es importante que la revises y edites para asegurarte de que esté completa y sea clara para los ciudadanos. Si querés hacer cambios, hacé click en el botón de editar y luego en guardar para actualizar la información del proyecto de ley."
@@ -128,5 +127,4 @@ const links = computed(() => {
         </p>
       </div>
     </UPageBody>
-  </NuxtLayout>
 </template>

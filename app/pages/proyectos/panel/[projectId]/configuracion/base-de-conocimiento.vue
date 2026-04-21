@@ -1,8 +1,8 @@
 <script setup>
 definePageMeta({
+  layout: 'panel-proyecto',
   middleware: 'auth'
 })
-const toast = useToast()
 const route = useRoute()
 const projectId = route.params.projectId
 const dashboardStatsRef = ref(null)
@@ -74,7 +74,6 @@ const searchVectorDatabase = async () => {
 </script>
 
 <template>
-  <NuxtLayout name="panel-proyecto">
     <UPageHeader
       title="Base de conocimiento"
       description="Aquí puedes gestionar la base de conocimiento del proyecto de ley, incluyendo documentos, referencias y recursos relacionados. Puede probar buscar en la base de datos vectorial palabras clave, conceptos o temas específicos para encontrar información relevante que pueda ayudar en el desarrollo del proyecto de ley."
@@ -244,5 +243,4 @@ const searchVectorDatabase = async () => {
         </UPageCard>
       </div>
     </UPageBody>
-  </NuxtLayout>
 </template>

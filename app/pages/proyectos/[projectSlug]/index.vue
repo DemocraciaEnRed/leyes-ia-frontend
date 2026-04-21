@@ -125,7 +125,6 @@ const availableSurveys = computed(() => availableSurveysResponse.value?.surveys 
 </script>
 
 <template>
-	<NuxtLayout name="default">
 		<ProjectDetailHero
 			v-if="status === 'success' && project"
 			:project="project"
@@ -179,9 +178,12 @@ const availableSurveys = computed(() => availableSurveysResponse.value?.surveys 
 				<ProjectDetailQuestionsSection :questions="proposedQuestions" />
 				<USeparator icon="lucide:quote" class="my-2" />
 				<ProjectDetailLegislatorQuotesSection :project-slug="projectSlug" />
+				<USeparator icon="lucide:vote" class="my-2" />
+				<ProjectDetailVotePredictionsSection :project-slug="projectSlug" />
+				<USeparator icon="lucide:landmark" class="my-2" />
+				<ProjectDetailVoteResultsSection :project-slug="projectSlug" />
 				<USeparator icon="lucide:megaphone" class="my-2" />
 				<ProjectDetailCTA :project-title="projectTitle" />
 			</template>
 		</UContainer>
-	</NuxtLayout>
 </template>

@@ -5,7 +5,7 @@ import type { SelectMenuItem } from '@nuxt/ui'
 import { CalendarDate } from '@internationalized/date'
 
 definePageMeta({
-  layout: 'workspace',
+  layout: 'panel-proyecto',
   middleware: 'auth'
 })
 
@@ -141,7 +141,6 @@ const uniqueHistory = computed(() => {
 </script>
 
 <template>
-  <NuxtLayout name="panel-proyecto">
     <UPageHeader
       title="Citas de Legisladores"
       headline="Análisis IA"
@@ -421,5 +420,4 @@ const uniqueHistory = computed(() => {
         class="my-12"
       />
     </UPageBody>
-  </NuxtLayout>
 </template>

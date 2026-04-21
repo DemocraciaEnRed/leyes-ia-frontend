@@ -2,7 +2,7 @@
 const runtimeConfig = useRuntimeConfig()
 
 definePageMeta({
-  layout: 'dashboard'
+  layout: 'panel-mi-cuenta'
 })
 
 const { data: knowledgeBases } = await useFetch(`/api/backend/knowledge-bases`, {

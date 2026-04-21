@@ -4,7 +4,7 @@ import { computed } from 'vue'
 const runtimeConfig = useRuntimeConfig()
 
 definePageMeta({
-  layout: 'workspace',
+  layout: 'panel-proyecto',
   middleware: 'auth'
 })
 const route = useRoute()
@@ -26,7 +26,6 @@ function doSomething() {
 </script>
 
 <template>
-  <NuxtLayout name="panel-proyecto">
     <UPageHeader
       :title="`${dataResponse?.project.name || 'Cargando...'} `"
       headline="Panel del proyecto"
@@ -50,5 +49,4 @@ function doSomething() {
         icon="lucide:info"
       />
     </UPageBody>
-  </NuxtLayout>
 </template>

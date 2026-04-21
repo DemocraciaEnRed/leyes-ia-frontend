@@ -1,4 +1,8 @@
 <script setup>
+definePageMeta({
+  layout: 'home'
+})
+
 const { loggedIn } = useAuth()
  
 const pageHeroLinks = ref([
@@ -40,7 +44,6 @@ const categorias = getCategorias()
 </script>
 
 <template>
-  <NuxtLayout name="home">
 
     <UBanner
       id="home-aviso-prototipo"
@@ -227,5 +230,4 @@ const categorias = getCategorias()
     <UContainer class="text-center">
 
     </UContainer>
-  </NuxtLayout>
 </template>

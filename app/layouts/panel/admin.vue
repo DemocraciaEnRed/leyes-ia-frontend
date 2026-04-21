@@ -13,25 +13,54 @@ const items = computed<NavigationMenuItem[]>(() => [
   ],
   [
     {
-      label: 'Mi cuenta',
-      icon: 'lucide:user',
+      label: 'Dashboard',
+      icon: 'lucide:chart-bar',
+      to: '/admin/dashboard',
+      active: route.path === '/admin/dashboard'
+    }
+  ],
+  [
+    {
+      label: 'Legisladores',
+      icon: 'lucide:users',
       defaultOpen: true,
-      active: route.path.startsWith('/mi-cuenta'),
+      active: route.path.startsWith('/admin/legisladores'),
       children: [
         {
-          label: 'Perfil',
-          icon: 'lucide:user-round',
-          to: '/mi-cuenta/perfil',
-          active: route.path === '/mi-cuenta/perfil'
+          label: 'Lista',
+          icon: 'lucide:list',
+          to: '/admin/legisladores',
+          active: route.path === '/admin/legisladores'
+        },
+        {
+          label: 'Nuevo Legislador',
+          icon: 'lucide:plus-circle',
+          to: '/admin/legisladores/nuevo',
+          active: route.path === '/admin/legisladores/nuevo'
         }
       ]
     }
   ],
   [
     {
-      label: 'Proyectos',
-      icon: 'lucide:folder',
-      to: '/cuenta/proyectos'
+      label: 'Partidos Políticos',
+      icon: 'lucide:landmark',
+      defaultOpen: true,
+      active: route.path.startsWith('/admin/partidos-politicos'),
+      children: [
+        {
+          label: 'Lista',
+          icon: 'lucide:list',
+          to: '/admin/partidos-politicos',
+          active: route.path === '/admin/partidos-politicos'
+        },
+        {
+          label: 'Nuevo Partido',
+          icon: 'lucide:plus-circle',
+          to: '/admin/partidos-politicos/nuevo',
+          active: route.path === '/admin/partidos-politicos/nuevo'
+        }
+      ]
     }
   ]
 ])

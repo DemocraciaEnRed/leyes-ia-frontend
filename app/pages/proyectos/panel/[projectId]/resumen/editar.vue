@@ -4,7 +4,7 @@ import { reactive, watch, ref, computed } from 'vue'
 const runtimeConfig = useRuntimeConfig()
 
 definePageMeta({
-  layout: 'workspace',
+  layout: 'panel-proyecto',
   middleware: 'auth'
 })
 
@@ -318,7 +318,6 @@ const toolbarItems = [
 </script>
 
 <template>
-  <NuxtLayout name="panel-proyecto">
     <UPageHeader
       title="Editar resumen"
       class="mb-6"
@@ -546,5 +545,4 @@ const toolbarItems = [
         </UButton>
       </div>
     </UPageBody>
-  </NuxtLayout>
 </template>

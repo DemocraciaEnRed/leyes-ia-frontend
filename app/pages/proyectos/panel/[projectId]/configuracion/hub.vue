@@ -1,5 +1,6 @@
 <script setup lang="ts">
 definePageMeta({
+  layout: 'panel-proyecto',
   middleware: 'auth'
 })
 
@@ -29,7 +30,6 @@ const canManageMembers = computed(() => {
 </script>
 
 <template>
-  <NuxtLayout name="panel-proyecto">
     <UPageHeader
       :title="projectName"
       description="Aquí puedes configurar los detalles y preferencias de tu Hub de proyecto de ley, incluyendo información general, gestión de miembros, integración con herramientas externas y ajustes de privacidad. Personaliza tu Hub para facilitar la colaboración y el desarrollo efectivo del proyecto de ley."
@@ -71,5 +71,4 @@ const canManageMembers = computed(() => {
         </p>
       </UPageCard>
     </UPageBody>
-  </NuxtLayout>
 </template>

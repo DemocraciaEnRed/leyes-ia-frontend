@@ -20,6 +20,7 @@ interface SurveyListResponse {
 }
 
 definePageMeta({
+  layout: 'panel-proyecto',
   middleware: 'auth'
 })
 const route = useRoute()
@@ -130,7 +131,6 @@ const links = ref([
 </script>
 
 <template>
-  <NuxtLayout name="panel-proyecto">
     <UPageHeader
       title="Encuestas"
       headline="Componentes de participación"
@@ -292,5 +292,4 @@ const links = ref([
         </div>
       </UPageCard>
     </UPageBody>
-  </NuxtLayout>
 </template>
